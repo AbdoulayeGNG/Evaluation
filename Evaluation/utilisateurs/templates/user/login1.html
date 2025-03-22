@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block bodyId %}loginPage{% endblock %}
+
+{% block content %}
+           <form action="{% url 'connecter' %}" method="post" id="loginPage">
+               {% csrf_token %}
+               {% if erreur %}
+               <p style="color: red;">{{ erreur }}</p>
+               {% endif %}
+               <p>
+                   <label for="user_type">Type d'utilisateur:</label>
+                   <select id="user_type" name="user_type" required onchange="updatePlaceholder()">
+                       <option value="">Sélectionner...</option>
+                       <option value="student">Étudiant</option>
+                       <option value="professor">Professeur</option>
+                   </select>
+               </p>
+               <p>
+                   <label for="username">Matricule:</label>
+                   <input type="text" id="username" required name="username">
+               </p>
+               <p>
+                   <label for="password">Mot de passe</label>
+                   <input type="password" id="password" required name="password">
+               </p>
+               <p>
+                   <input type="submit" value="Se connecter">
+                   <a href="{% url 'creerCompte' %}">Créer un compte</a>
+               </p>
+               <a href="">Mot de passe oublié</a>
+           </form>
+
+           <script>
+               function updatePlaceholder() {
+                   const userType = document.getElementById('user_type').value;
+                   const usernameInput = document.getElementById('username');
+                   
+                   if (userType === 'student') {
+                       usernameInput.placeholder = 'Matricule étudiant';
+                   } else if (userType === 'professor') {
+                       usernameInput.placeholder = 'Matricule professeur';
+                   }
+               }
+           </script>
+{% endblock %}

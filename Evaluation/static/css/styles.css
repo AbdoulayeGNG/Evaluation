@@ -1,0 +1,21 @@
+
+.register-box{
+    /* background-color: rgb(22, 37, 250, 0.938); */
+    margin-top: 5px;
+}
+#cree{
+    display: block;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#creer{
+    width: 100px;
+    margin:10px 125px;
+    background-color: rgba(22, 37, 250, 0.938);
+    font-size: 1.1em;
+    color: white;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>AdminLTE 2 | Log in</title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <!-- ... existing CSS imports ... -->
+  </head>
+  <body class="login-page">
+    <div class="login-box">
+      <div class="login-box-body">
+        <p class="login-box-msg">Connexion</p>
+        <form action="{% url 'connecter' %}" method="post">
+            {% csrf_token %}
+            {% if erreur %}
+            <p style="color: red;">{{ erreur }}</p>
+            {% endif %}
+          
+          <!-- Add user type dropdown -->
+          <div class="form-group has-feedback">
+            <select class="form-control" name="user_type" id="user_type" onchange="toggleFields()">
+              <option value="">Select User Type</option>
+              <option value="student">Student</option>
+              <option value="instructor">Instructor</option>
+              <option value="admin">Administrator</option>
+            </select>
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+          </div>
+
+          <div class="form-group has-feedback">
+            <input type="text" class="form-control" placeholder="matricule" name="username" id="username"/>
+            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+          </div>
+          <div class="form-group has-feedback">
+            <input type="password" class="form-control" placeholder="Mot de passe" name="password"/>
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+          </div>
+          <!-- ... rest of the existing form ... -->
+        </form>
+
+        <!-- ... existing social auth links and other content ... -->
+      </div>
+    </div>
+
+    <!-- ... existing script imports ... -->
+    
+    <!-- Add custom JavaScript for field toggling -->
+    <script>
+      function toggleFields() {
+        const userType = document.getElementById('user_type').value;
+        const usernamePlaceholder = document.getElementById('username');
+        
+        if (userType === 'student') {
+          usernamePlaceholder.placeholder = 'Student Number';
+        } else if (userType === 'instructor') {
+          usernamePlaceholder.placeholder = 'Teacher ID';
+        } else if (userType === 'admin') {
+          usernamePlaceholder.placeholder = 'Admin ID';
+        }
+      }
+
+      // Existing iCheck initialization
+      $(function () {
+        $('input').iCheck({
+          checkboxClass: 'icheckbox_square-blue',
+          radioClass: 'iradio_square-blue',
+          increaseArea: '20%'
+        });
+      });
+    </script>
+  </body>
+</html>
+

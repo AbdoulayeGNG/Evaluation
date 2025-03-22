@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block title %}Création du compte{% endblock %}
+
+{% block bodyId %}loginPage{% endblock %}
+
+{% block content %}
+           <form action="{% url 'creerCompte' %}" method="post" id="CreationPage">
+               {% csrf_token %}
+               <p>
+                   <label for="matricule">Matricule:</label>
+                   <input type="text" id="matricule" required name="matricule">
+               </p>
+               <p>
+                  <label for="nom">Nom:</label>
+                  <input type="text" id="nom" name="nom" required>
+               </p>
+               <p>
+                <label for="prenom">Prénom:</label>
+                <input type="text" id="prenom" name="prenom" required>
+               </p>
+               <p>
+                <label for="faculte">Département:</label>
+                <select  id="faculte" name="departement" >
+                    <optgroup label=" FST">
+                        <option value="Informatique">Informatique</option>
+                        <option value="Miage">Miage</option>
+                        <option value="Mathématique">Mathématique</option>
+                        <option value="Energie photovoltaïque">Energie photovoltaïque</option>
+                        <option value="Biologie">Biologie</option>
+                    </optgroup>
+                    <optgroup label=" FSAG">
+                        <option value="AP">Administration publique</option>
+                        <option value="Gestion">Gestion</option>
+                        <option value="Economie">Economie</option>
+                    </optgroup>
+                </select>
+              </p>
+               <p>
+                   <label for="password">Mot de passe</label>
+                   <input type="password" id="password" required name="password">
+               </p>
+               <p>
+                   <input type="submit" value="Créer un compte">
+                   <a href="{% url 'connecter' %}">Se connecter</a>
+               </p>
+           </form>
+{% endblock %}

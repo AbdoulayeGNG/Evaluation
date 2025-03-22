@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block styles %}
+        <link rel="stylesheet" href="../static/css/style.css">
+    {% endblock %}
+    <title>{% block title %}Bienvenue{% endblock %}</title>
+</head>
+<body id="{block bodyId}genericPage{endblock}">
+    <header>
+        <nav>
+
+        </nav>
+    </header>
+    <section id="content">
+          {% block content %}
+            
+          {% endblock %}
+    </section>
+</body>
+</html>
