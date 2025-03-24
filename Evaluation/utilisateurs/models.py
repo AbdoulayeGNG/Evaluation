@@ -28,7 +28,8 @@ class Etudiant(models.Model):
 # Modèle Professeur
 class Professeur(models.Model):
     user = models.OneToOneField(Utilisateur, on_delete=models.CASCADE)
-    email = models.EmailField(unique=True)
+    nom=models.CharField(max_length=50)
+    prenom=models.CharField(max_length=100)
     departement = models.CharField(max_length=100)
 
     def __str__(self):

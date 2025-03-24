@@ -46,7 +46,7 @@ class EtudiantAdmin(admin.ModelAdmin):
     search_fields = ('nom', 'prenom', 'email')
 
 class ProfesseurAdmin(admin.ModelAdmin):
-    list_display = ('user', 'email', 'departement')
+    list_display = ('user', 'departement')
     search_fields = ('user__username', 'email')
 
 class AdministrateurAdmin(admin.ModelAdmin):

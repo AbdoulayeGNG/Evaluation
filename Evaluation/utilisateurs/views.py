@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login,authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Etudiant
 from django.contrib.auth.hashers import make_password
 
 
@@ -62,8 +61,6 @@ def CreationCompte(request):
                 nom=request.POST.get('nom'),
                 prenom=request.POST.get('prenom'),
                 departement=request.POST.get('departement'),
-                telephone=request.POST.get('contact'),
-                email=email
             )
         elif role == 'admin':
             Administrateur.objects.create(
@@ -109,7 +106,7 @@ def connecter(request):
             if hasattr(utilisateur, 'etudiant'):
                 return redirect('accueil')
             elif hasattr(utilisateur, 'professeur'):
-                return redirect('professeur_dashboard')
+                return redirect('accueil')
             elif hasattr(utilisateur, 'administrateur'):
                 return redirect('admin_dashboard')
             return redirect('accueil')

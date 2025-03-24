@@ -53,7 +53,7 @@
           <input type="hidden" name="role" value="etudiant">
           <div class="form-group has-feedback">
             <input type="text" class="form-control" placeholder="Matricule étudiant (Format: ETU1234567)" 
-                   name="matricule" pattern="ETU[0-9]{7}" required/>
+                   name="matricule" required/>
             <span class="glyphicon glyphicon-user form-control-feedback"></span>
             <small class="help-block">Le matricule doit commencer par ETU suivi de 7 chiffres</small>
           </div>
@@ -121,7 +121,11 @@
           {% csrf_token %}
           <input type="hidden" name="role" value="professeur">
           <div class="form-group has-feedback">
-            <input type="text" class="form-control" placeholder="Matricule professeur" name="matricule" required/>
+            <input type="text" class="form-control" placeholder="Saisir votre nom" name="nom" required/>
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+          </div>
+          <div class="form-group has-feedback">
+            <input type="text" class="form-control" placeholder="Saisir votre prenom" name="prenom" required/>
             <span class="glyphicon glyphicon-user form-control-feedback"></span>
           </div>
           <!-- ...champs communs... -->
@@ -143,16 +147,9 @@
             </select>
           </div>
           <!-- ...autres champs sans le niveau... -->
+         
           <div class="form-group has-feedback">
-            <input type="text" class="form-control" placeholder="Saisir votre nom" name="nom" required/>
-            <span class="glyphicon glyphicon-user form-control-feedback"></span>
-          </div>
-          <div class="form-group has-feedback">
-            <input type="text" class="form-control" placeholder="Saisir votre prenom" name="prenom" required/>
-            <span class="glyphicon glyphicon-user form-control-feedback"></span>
-          </div>
-          <div class="form-group has-feedback">
-            <input type="text" class="form-control" placeholder="Saisir votre Contact" name="contact" required/>
+            <input type="text" class="form-control" placeholder="Saisir votre contact" name="matricule" required/>
             <span class="glyphicon glyphicon-user form-control-feedback"></span>
           </div>
           <div class="form-group has-feedback">
@@ -255,7 +252,7 @@
           }
           
           // Validation du matricule selon le type d'utilisateur
-          const role = form.querySelector('input[name="role"]').value;
+          /*const role = form.querySelector('input[name="role"]').value;
           const matricule = form.querySelector('input[name="matricule"]').value;
           
           const matriculePatterns = {
@@ -268,7 +265,7 @@
             e.preventDefault();
             alert('Format de matricule invalide');
             return false;
-          }
+          }*/
         });
       });
     </script>
