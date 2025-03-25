@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Évaluations Validées</h2>
+
+{% for evaluation in evaluations %}
+<div>
+    <h3>Formation : {{ evaluation.formation.nom }}</h3>
+    <p><strong>Étudiant :</strong> {{ evaluation.etudiant.username }}</p>
+    <p><strong>Date :</strong> {{ evaluation.date_creation }}</p>
+    
+    <h4>Notes par Critère :</h4>
+    <ul>
+        {% for note in evaluation.notes.all %}
+        <li><strong>{{ note.critere.nom }} :</strong> {{ note.note }}/5</li>
+        {% endfor %}
+    </ul>
+
+    <p><strong>Commentaire :</strong> {{ evaluation.commentaire }}</p>
+</div>
+{% endfor %}
+{% endblock %}

@@ -3,6 +3,8 @@ from django.contrib.auth import login,authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import make_password
 
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 
 from django.shortcuts import render, redirect, get_object_or_404
 #from django.contrib.auth import login, logout
@@ -67,9 +69,29 @@ def CreationCompte(request):
                 user=utilisateur,
                 nom=request.POST.get('nom'),
                 prenom=request.POST.get('prenom'),
-                telephone=request.POST.get('contact'),
-                email=email
+                contact=request.POST.get('contact'),
             )
+            content_type = ContentType.objects.get_for_model(Utilisateur)
+            permissions = Permission.objects.filter(content_type=content_type)
+            
+            # Définir les permissions spécifiques
+            admin_permissions = [
+                'view_utilisateur',
+                'add_utilisateur',
+                'change_utilisateur',
+                'delete_utilisateur',
+                'view_etudiant',
+                'view_professeur',
+                'view_administrateur',
+            ]
+            
+            # Attribuer les permissions
+            for perm in permissions:
+                if perm.codename in admin_permissions:
+                    utilisateur.user_permissions.add(perm)
+            
+            utilisateur.is_staff = True  # Permet l'accès à l'interface d'administration
+            utilisateur.save()
         else:
             # Supprimer l'utilisateur si le rôle n'est pas valide
             utilisateur.delete()
@@ -81,7 +103,7 @@ def CreationCompte(request):
 
         # Rediriger vers le tableau de bord approprié
         if role == 'etudiant':
-            return redirect('accueil')
+            return redirect('ajouter_evaluation')
         elif role == 'professeur':
             return redirect('accueil')
         elif role == 'admin':

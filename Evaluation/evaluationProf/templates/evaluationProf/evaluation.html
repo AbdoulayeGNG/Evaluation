@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Ajouter une Évaluation</h2>
+
+{% if user.is_authenticated %}
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Formation :</label>
+        <select name="formation">
+            {% for formation in formations %}
+            <option value="{{ formation.id }}">{{ formation.nom }}</option>
+            {% endfor %}
+        </select>
+
+        <h3>Évaluer selon les critères suivants :</h3>
+        {% for critere in criteres %}
+            <label>{{ critere.nom }} :</label>
+            <select name="critere_{{ critere.id }}">
+                <option value="1">1 - Très mauvais</option>
+                <option value="2">2 - Mauvais</option>
+                <option value="3">3 - Moyen</option>
+                <option value="4">4 - Bon</option>
+                <option value="5">5 - Excellent</option>
+            </select>
+        {% endfor %}
+
+        <label>Commentaire :</label>
+        <textarea name="commentaire" required></textarea>  
+
+        <button type="submit">Soumettre</button>
+    </form>
+{% else %}
+    <p>Vous devez être connecté pour soumettre une évaluation.</p>
+    <a href="{% url 'connecter' %}">Se connecter</a>
+{% endif %}
+
+{% endblock %}

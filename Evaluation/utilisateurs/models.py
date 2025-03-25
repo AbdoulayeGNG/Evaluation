@@ -1,7 +1,6 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
-# Modèle utilisateur personnalisé
 class Utilisateur(AbstractUser):
     ROLES = [
         ('etudiant', 'Étudiant'),
@@ -10,8 +9,16 @@ class Utilisateur(AbstractUser):
     ]
     
     role = models.CharField(max_length=10, choices=ROLES)
+    
+    def save(self, *args, **kwargs):
+        if not self.pk and self.role == 'admin':  # Si nouvel utilisateur admin
+            self.is_staff = True  # Permet l'accès à l'interface d'administration
+            self.is_superuser = False  # N'accorde pas tous les droits super-utilisateur
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         return f"{self.username} - {self.role}"
+
 class Etudiant(models.Model):
     user = models.OneToOneField(Utilisateur, on_delete=models.CASCADE)
     nom = models.CharField(max_length=100)
@@ -38,6 +45,9 @@ class Professeur(models.Model):
 # Modèle Administrateur
 class Administrateur(models.Model):
     user = models.OneToOneField(Utilisateur, on_delete=models.CASCADE)
+    nom=models.CharField(max_length=50)
+    prenom=models.CharField(max_length=100)
+    contact=models.CharField(max_length=15)
     
     def __str__(self):
-        return f"Admin: {self.user.username}"    
+        return f"Admin: {self.user.username}"
