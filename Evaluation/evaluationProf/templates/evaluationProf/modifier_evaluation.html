@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% block content %}
+<h2>Modifier l'Évaluation</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <label for="commentaire">Commentaire :</label>
+    <textarea name="commentaire" required>{{ evaluation.commentaire }}</textarea>
+
+    <h3>Notes par critère :</h3>
+    {% for critere in criteres %}
+        <label>{{ critere.nom }} :</label>
+        <select name="critere_{{ critere.id }}">
+            <option value="">Sélectionner</option>
+            {% for i in "12345" %}
+                <option value="{{ i }}" {% if notes_existantes|get_item:critere.id == i %}selected{% endif %}>{{ i }}</option>
+            {% endfor %}
+        </select>
+        <br>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-success">Modifier</button>
+</form>
+
+<a href="{% url 'liste_evaluations' %}" class="btn btn-secondary">Annuler</a>
+{% endblock %}

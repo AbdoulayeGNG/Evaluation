@@ -12,9 +12,18 @@ class Critere(models.Model):
 
 # Modèle Formation
 class Formation(models.Model):
-    nom = models.CharField(max_length=255, unique=True)
+    NIVEAUX_CHOICES = [
+        ('L1', 'Licence 1'),
+        ('L2', 'Licence 2'),
+        ('L3', 'Licence 3'),
+        ('M1', 'Master 1'),
+        ('M2', 'Master 2'),
+                          ]
+    nom = models.CharField(max_length=255)
     description = models.TextField()
     professeur = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, limit_choices_to={'role': 'professeur'})
+    niveau = models.CharField(max_length=2, choices=NIVEAUX_CHOICES)  # Ajout du niveau
+    departement = models.CharField(max_length=255)
 
     def __str__(self):
         return self.nom
@@ -30,7 +39,7 @@ class Evaluation(models.Model):
 
     def peut_modifier(self):
         """ Vérifie si l'évaluation peut encore être modifiée (ex: sous 24h) """
-        return now() - self.date_creation <= timedelta(hours=24)
+        return now() - self.date_creation <= timedelta(minutes=2)
 
     def __str__(self):
         return f"{self.etudiant.username} - {self.formation.nom} - {self.date_creation}"

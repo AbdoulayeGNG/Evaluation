@@ -20,11 +20,18 @@ class Utilisateur(AbstractUser):
         return f"{self.username} - {self.role}"
 
 class Etudiant(models.Model):
+    NIVEAUX_CHOICES = [
+        ('L1', 'Licence 1'),
+        ('L2', 'Licence 2'),
+        ('L3', 'Licence 3'),
+        ('M1', 'Master 1'),
+        ('M2', 'Master 2'),
+    ]
     user = models.OneToOneField(Utilisateur, on_delete=models.CASCADE)
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     departement = models.CharField(max_length=100)
-    licence = models.CharField(max_length=100)
+    licence  = models.CharField(max_length=2, choices=NIVEAUX_CHOICES)
     telephone = models.CharField(max_length=100)
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)

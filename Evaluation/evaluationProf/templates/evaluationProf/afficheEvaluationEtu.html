@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Vos Évaluations</h2>
+
+{% if evaluationEtudiant %}
+    <ul>
+        {% for evaluation in evaluationEtudiant %}
+            <li>
+                <strong>{{ evaluation.formation.nom }}</strong> - Note : 
+                {% for critere in evaluation.notecritere_set.all %}
+                    {{ critere.critere.nom }}: {{ critere.note }}
+                {% endfor %}
+                <br> Commentaire : {{ evaluation.commentaire }}
+                <br> Soumis le : {{ evaluation.date_creation }}
+
+                {% if evaluation.date_creation|timesince > "0:00:30" %}
+                    <a href="{% url 'modifier_evaluation' evaluation.id %}" class="btn btn-primary">Modifier</a>
+                    <a href="{% url 'supprimer_evaluation' evaluation.id %}" class="btn btn-danger">Supprimer</a>
+                {% else %}
+                    <p><em>Modification et suppression non autorisées (délai expiré).</em></p>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Aucune évaluation trouvée.</p>
+{% endif %}
+
+{% endblock %}
