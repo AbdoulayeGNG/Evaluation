@@ -1,39 +1,96 @@
-{% extends "base.html" %}
+{% extends "base1.html" %}
+
 {% block content %}
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Ajouter une Évaluation</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'etudiants:dashboard_etudiant' %}">Accueil</a></li>
+                        <li class="breadcrumb-item active">Nouvelle Évaluation</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<h2>Ajouter une Évaluation</h2>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Formulaire d'évaluation</h3>
+                        </div>
+                        {% if user.is_authenticated %}
+                            <form method="post" class="form-horizontal">
+                                {% csrf_token %}
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Formation</label>
+                                        <div class="col-sm-9">
+                                            <select name="formation" class="form-control">
+                                                {% for formation in formations %}
+                                                    <option value="{{ formation.id }}">{{ formation.nom }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
 
-{% if user.is_authenticated %}
-    <form method="post">
-        {% csrf_token %}
+                                    <div class="form-group row mt-4">
+                                        <div class="col-12">
+                                            <h4 class="text-primary">Critères d'évaluation</h4>
+                                        </div>
+                                    </div>
 
-        <label>Formation :</label>
-        <select name="formation">
-            {% for formation in formations %}
-            <option value="{{ formation.id }}">{{ formation.nom }}</option>
-            {% endfor %}
-        </select>
+                                    {% for critere in criteres %}
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">{{ critere.nom }}</label>
+                                        <div class="col-sm-9">
+                                            <select name="critere_{{ critere.id }}" class="form-control">
+                                                <option value="1">1 - Très mauvais</option>
+                                                <option value="2">2 - Mauvais</option>
+                                                <option value="3">3 - Moyen</option>
+                                                <option value="4">4 - Bon</option>
+                                                <option value="5">5 - Excellent</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
 
-        <h3>Évaluer selon les critères suivants :</h3>
-        {% for critere in criteres %}
-            <label>{{ critere.nom }} :</label>
-            <select name="critere_{{ critere.id }}">
-                <option value="1">1 - Très mauvais</option>
-                <option value="2">2 - Mauvais</option>
-                <option value="3">3 - Moyen</option>
-                <option value="4">4 - Bon</option>
-                <option value="5">5 - Excellent</option>
-            </select>
-        {% endfor %}
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Commentaire</label>
+                                        <div class="col-sm-9">
+                                            <textarea name="commentaire" class="form-control" rows="5" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
 
-        <label>Commentaire :</label>
-        <textarea name="commentaire" required></textarea>  
-
-        <button type="submit">Soumettre</button>
-    </form>
-{% else %}
-    <p>Vous devez être connecté pour soumettre une évaluation.</p>
-    <a href="{% url 'connecter' %}">Se connecter</a>
-{% endif %}
-
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary btn-block">
+                                        <i class="fas fa-save"></i> Soumettre l'évaluation
+                                    </button>
+                                </div>
+                            </form>
+                        {% else %}
+                            <div class="card-body">
+                                <div class="alert alert-warning">
+                                    <h5><i class="icon fas fa-exclamation-triangle"></i> Attention!</h5>
+                                    Vous devez être connecté pour soumettre une évaluation.
+                                </div>
+                                <a href="{% url 'utilisateurs:connecter' %}" class="btn btn-primary">
+                                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 {% endblock %}

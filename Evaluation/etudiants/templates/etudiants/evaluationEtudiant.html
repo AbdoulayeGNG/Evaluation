@@ -1,0 +1,137 @@
+{% extends "base1.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <!-- Titre de la page -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Détails des Évaluations</h1>
+            </div>
+
+            {% for evaluation in evaluations %}
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Évaluation du {{ evaluation.date_creation|date:"d/m/Y H:i" }}</h5>
+                    <span class="badge {% if evaluation.statut == 'validé' %}bg-success{% elif evaluation.statut == 'en_attente' %}bg-warning{% else %}bg-secondary{% endif %}">
+                        {{ evaluation.statut }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <!-- Informations sur la formation et le professeur -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">Formation</h5>
+                                    <p class="card-text"><strong>Nom :</strong> {{ evaluation.formation.nom }}</p>
+                                    <p class="card-text"><strong>Niveau :</strong> {{ evaluation.formation.niveau }}</p>
+                                    <p class="card-text"><strong>Département :</strong> {{ evaluation.formation.departement }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">Professeur</h5>
+                                    <p class="card-text"><strong>Nom :</strong> {{ evaluation.formation.professeur.nom }}</p>
+                                    <p class="card-text"><strong>Prénom :</strong> {{ evaluation.formation.professeur.prenom }}</p>
+                                    <p class="card-text"><strong>Département :</strong> {{ evaluation.formation.professeur.departement }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes par critères -->
+                    <h5 class="mb-3">Notes par critères</h5>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Critère</th>
+                                    <th>Note</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for note in evaluation.notes.all %}
+                                <tr>
+                                    <td>{{ note.critere.nom }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress flex-grow-1" style="height: 20px;">
+                                                <div class="progress-bar bg-info" role="progressbar" 
+                                                     style="width: {% widthratio note.note 5 100 %}%" 
+                                                     aria-valuenow="{{ note.note }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="5">
+                                                    {{ note.note }}/5
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center">Aucune note n'a été attribuée</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Commentaire général -->
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title">Commentaire général</h5>
+                            <p class="card-text">{{ evaluation.commentaire|linebreaks }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    <div class="mt-4 text-end">
+                        {% if evaluation.peut_modifier %}
+                        <a href="{% url 'evaluationProf:modifier_evaluation' evaluation.id %}" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <a href="{% url 'evaluationProf:supprimer_evaluation' evaluation.id %}" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Vous n'avez pas encore fait d'évaluations.
+            </div>
+            {% endfor %}
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .progress {
+        background-color: #e9ecef;
+        border-radius: 0.25rem;
+    }
+    .card {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .table td, .table th {
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Activation des tooltips Bootstrap
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+{% endblock %}

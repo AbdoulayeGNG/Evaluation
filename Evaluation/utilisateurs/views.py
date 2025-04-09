@@ -103,11 +103,11 @@ def CreationCompte(request):
 
         # Rediriger vers le tableau de bord approprié
         if role == 'etudiant':
-            return redirect('ajouter_evaluation')
+            return redirect('evaluationProf:ajouter_evaluation')
         elif role == 'professeur':
-            return redirect('accueil')
+            return redirect('utilisateurs:accueil')
         elif role == 'admin':
-            return redirect('accueil')
+            return redirect('utilisateurs:accueil')
 
     # Si méthode GET, afficher le formulaire
     return render(request, 'user/register.html')
@@ -126,19 +126,19 @@ def connecter(request):
             login(request, utilisateur)
             # Redirection selon le rôle
             if hasattr(utilisateur, 'etudiant'):
-                return redirect('accueil')
+                return redirect('utilisateurs:accueil')
             elif hasattr(utilisateur, 'professeur'):
-                return redirect('accueil')
+                return redirect('utilisateurs:accueil')
             elif hasattr(utilisateur, 'administrateur'):
                 return redirect('admin_dashboard')
-            return redirect('accueil')
+            return redirect('utilisateurs:accueil')
 
     # Afficher le formulaire de connexion
     return render(request, 'user/login.html')
 def deconnecter(request):
     # Déconnecter l'utilisateur
     logout(request)
-    return redirect('accueil')
+    return redirect('utilisateurs:accueil')
 
 
 

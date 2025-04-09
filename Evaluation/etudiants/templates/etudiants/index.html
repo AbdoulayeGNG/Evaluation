@@ -1,0 +1,140 @@
+{% extends "base1.html" %}
+{% load static %}
+
+        <!-- Sidebar -->
+        
+        {% block content %}
+    <div class="container-fluid">
+        <div class="row">
+        <!-- Contenu Principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <!-- Section Bienvenue -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Bienvenue à la plateforme d'évaluations des professeurs {{ request.user.first_name }}</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="{% url 'evaluationProf:ajouter_evaluation' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nouvelle Évaluation
+                    </a>
+                </div>
+            </div>
+
+            <!-- Cartes de statistiques -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Évaluations Totales</h5>
+                            <h2 class="card-text">{{ total_evaluations }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Évaluations en Attente</h5>
+                            <h2 class="card-text">{{ evaluations_en_attente }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Professeurs Évalués</h5>
+                            <h2 class="card-text">{{ profs_evalues }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des dernières évaluations -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Vos Dernières Évaluations</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Professeur</th>
+                                    <th>Formation</th>
+                                    <th>Date</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for evaluation in evaluations_recentes %}
+                                <tr>
+                                    <td>{{ evaluation.formation.professeur.nom }} {{ evaluation.formation.professeur.prenom }}</td>
+                                    <td>{{ evaluation.formation.nom }}</td>
+                                    <td>{{ evaluation.date_creation|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        <span class="badge {% if evaluation.statut == 'validé' %}bg-success{% elif evaluation.statut == 'en attente' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                            {{ evaluation.statut }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if evaluation.peut_modifier %}
+                                        <a href="{% url 'evaluationProf:modifier_evaluation' evaluation.id %}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'evaluationProf:supprimer_evaluation' evaluation.id %}" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">Aucune évaluation récente</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+</div>   
+{% endblock %}
+  
+
+
+{% block extra_css %}
+<style>
+    .sidebar {
+        min-height: calc(100vh - 56px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .nav-link {
+        color: #333;
+        padding: 0.8rem 1rem;
+    }
+    
+    .nav-link:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .nav-link.active {
+        color: #007bff;
+        background-color: #e9ecef;
+    }
+    
+    .card {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Activation des tooltips Bootstrap
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+{% endblock %}

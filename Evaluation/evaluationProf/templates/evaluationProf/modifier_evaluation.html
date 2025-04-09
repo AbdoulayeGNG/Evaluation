@@ -1,28 +1,91 @@
-{% extends "base.html" %}
-{% load custom_filters %}
+{% extends "base1.html" %}
+
 {% block content %}
-<h2>Modifier l'Évaluation</h2>
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Modifier l'Évaluation</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'etudiants:dashboard_etudiant' %}">Accueil</a></li>
+                        <li class="breadcrumb-item active">Modifier Évaluation</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<form method="post">
-    {% csrf_token %}
-    
-    <label for="commentaire">Commentaire :</label>
-    <textarea name="commentaire" required>{{ evaluation.commentaire }}</textarea>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h3 class="card-title">Modification de l'évaluation</h3>
+                        </div>
+                        
+                            <form method="post" class="form-horizontal">
+                                {% csrf_token %}
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Formation</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" value="{{ evaluation.formation.nom }}" readonly>
+                                        </div>
+                                    </div>
 
-    <h3>Notes par critère :</h3>
-    {% for critere in criteres %}
-        <label>{{ critere.nom }} :</label>
-        <select name="critere_{{ critere.id }}">
-            <option value="">Sélectionner</option>
-            {% for i in "12345" %}
-                <option value="{{ i }}" {% if notes_existantes|get_item:critere.id == i %}selected{% endif %}>{{ i }}</option>
-            {% endfor %}
-        </select>
-        <br>
-    {% endfor %}
+                                    <div class="form-group row mt-4">
+                                        <div class="col-12">
+                                            <h4 class="text-warning">Notes actuelles</h4>
+                                        </div>
+                                    </div>
 
-    <button type="submit" class="btn btn-success">Modifier</button>
-</form>
+                                    {% for note in notes_existantes %}
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">{{ note.critere.nom }}</label>
+                                        <div class="col-sm-9">
+                                            <select name="critere_{{ note.critere.id }}" class="form-control">
+                                                <option value="1" {% if note.note == 1 %}selected{% endif %}>1 - Très mauvais</option>
+                                                <option value="2" {% if note.note == 2 %}selected{% endif %}>2 - Mauvais</option>
+                                                <option value="3" {% if note.note == 3 %}selected{% endif %}>3 - Moyen</option>
+                                                <option value="4" {% if note.note == 4 %}selected{% endif %}>4 - Bon</option>
+                                                <option value="5" {% if note.note == 5 %}selected{% endif %}>5 - Excellent</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
 
-<a href="{% url 'liste_evaluations' %}" class="btn btn-secondary">Annuler</a>
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Commentaire</label>
+                                        <div class="col-sm-9">
+                                            <textarea name="commentaire" class="form-control" rows="5" required>{{ evaluation.commentaire }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <a href="{% url 'etudiants:dashboard_etudiant' %}" class="btn btn-secondary btn-block">
+                                                <i class="fas fa-arrow-left"></i> Retour
+                                            </a>
+                                        </div>
+                                        <div class="col-6">
+                                            <button type="submit" class="btn btn-warning btn-block">
+                                                <i class="fas fa-edit"></i> Mettre à jour
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 {% endblock %}

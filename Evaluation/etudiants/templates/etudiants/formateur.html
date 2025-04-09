@@ -1,0 +1,48 @@
+{% extends "base1.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Mes Professeurs Évalués</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <span class="badge bg-primary">Total évaluations : {{ total_evaluations }}</span>
+                </div>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for prof in professeurs %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ prof.prenom }} {{ prof.nom }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ prof.departement }}</h6>
+                            
+                            <p class="card-text">
+                                <strong>Formations évaluées :</strong>
+                                <ul class="list-unstyled">
+                                    {% for formation in prof.formations %}
+                                    <li><i class="fas fa-check-circle text-success"></i> {{ formation }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </p>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-info">{{ prof.evaluations_count }} évaluation(s)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        Vous n'avez pas encore évalué de professeurs.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

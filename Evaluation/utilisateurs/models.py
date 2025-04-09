@@ -33,6 +33,7 @@ class Etudiant(models.Model):
     departement = models.CharField(max_length=100)
     licence  = models.CharField(max_length=2, choices=NIVEAUX_CHOICES)
     telephone = models.CharField(max_length=100)
+    photo = models.ImageField(upload_to='photos_profil/', null=True, blank=True)
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
 
@@ -47,7 +48,7 @@ class Professeur(models.Model):
     departement = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"Prof: {self.user.username} - {self.departement}"
+        return f"Prof: {self.prenom} - {self.departement}"
 
 # Modèle Administrateur
 class Administrateur(models.Model):

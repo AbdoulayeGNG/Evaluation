@@ -36,7 +36,7 @@ def ajouter_evaluation(request):
                 )
 
         messages.success(request, "Évaluation ajoutée avec succès ! En attente de validation.")
-        return redirect("liste_evaluations")
+        return redirect('etudiants:dashboard_etudiant')
     etudiant = request.user.etudiant
     formations = Formation.objects.filter(niveau=etudiant.licence, departement=etudiant.departement)
     # formations = Formation.objects.all()
@@ -63,16 +63,16 @@ def modifier_evaluation(request, evaluation_id):
     evaluation = get_object_or_404(Evaluation, id=evaluation_id, etudiant=request.user)
 
     # Vérifier si l'évaluation peut encore être modifiée (moins de 30 minutes)
-    if now() - evaluation.date_creation > timedelta(minutes=30):
+    if now() - evaluation.date_creation > timedelta(minutes=1440):
         messages.error(request, "Le délai de modification est expiré.")
-        return redirect("evaluationEtudiant")
+        return redirect("etudiants:dashboard_etudiant")
 
     if request.method == "POST":
         commentaire = request.POST.get("commentaire", "").strip()
 
         if not commentaire:
             messages.error(request, "Le commentaire est obligatoire.")
-            return redirect("modifier_evaluation", evaluation_id=evaluation.id)
+            return redirect("evaluationProf:modifier_evaluation", evaluation_id=evaluation.id)
 
         evaluation.commentaire = commentaire
         evaluation.save()
@@ -90,7 +90,7 @@ def modifier_evaluation(request, evaluation_id):
                     note_critere.save()
 
         messages.success(request, "Évaluation modifiée avec succès.")
-        return redirect("evaluationEtudiant")
+        return redirect("etudiants:dashboard_etudiant")
 
     criteres = Critere.objects.all()
     notes_existantes = {note.critere.id: note.note for note in NoteCritere.objects.filter(evaluation=evaluation)}
@@ -106,13 +106,13 @@ def supprimer_evaluation(request, evaluation_id):
     evaluation = get_object_or_404(Evaluation, id=evaluation_id, etudiant=request.user)
 
     # Vérifier si le délai de suppression est encore valable
-    if now() - evaluation.date_creation > timedelta(minutes=30):
+    if now() - evaluation.date_creation > timedelta(minutes=1440):
         messages.error(request, "Le délai de suppression est expiré.")
-        return redirect("liste_evaluations")
+        return redirect("evaluationProf:liste_evaluations")
 
     if request.method == "POST":
         evaluation.delete()
         messages.success(request, "Évaluation supprimée avec succès.")
-        return redirect("liste_evaluations")
+        return redirect("etudiants:dashboard_etudiant")
 
     return render(request, "evaluationProf/confirmer_suppression.html", {"evaluation": evaluation})

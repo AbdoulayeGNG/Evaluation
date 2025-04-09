@@ -48,7 +48,7 @@
         </div>
 
         <!-- Formulaire Étudiant -->
-        <form action="{% url 'creerCompte' %}" method="post" id="formEtudiant" style="display:none;">
+        <form action="{% url 'utilisateurs:creerCompte' %}" method="post" id="formEtudiant" style="display:none;">
           {% csrf_token %}
           <input type="hidden" name="role" value="etudiant">
           <div class="form-group has-feedback">
@@ -117,7 +117,7 @@
         </form>
 
         <!-- Formulaire Professeur -->
-        <form action="{% url 'creerCompte' %}" method="post" id="formProfesseur" style="display:none;">
+        <form action="{% url 'utilisateurs:creerCompte' %}" method="post" id="formProfesseur" style="display:none;">
           {% csrf_token %}
           <input type="hidden" name="role" value="professeur">
           <div class="form-group has-feedback">
@@ -172,7 +172,7 @@
         </form>
 
         <!-- Formulaire Administrateur -->
-        <form action="{% url 'creerCompte' %}" method="post" id="formAdmin" style="display:none;">
+        <form action="{% url 'utilisateurs:creerCompte' %}" method="post" id="formAdmin" style="display:none;">
           {% csrf_token %}
           <input type="hidden" name="role" value="admin">
           <div class="form-group has-feedback">
@@ -211,7 +211,7 @@
           </div>
         </form>
 
-        <p>Avez vous déjà un compte? <a href="{% url 'connecter' %}" class="text-center">Connectez-vous</a></p>
+        <p>Avez vous déjà un compte? <a href="{% url 'utilisateurs:connecter' %}" class="text-center">Connectez-vous</a></p>
       </div><!-- /.form-box -->
     </div><!-- /.register-box -->
 

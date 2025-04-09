@@ -13,9 +13,9 @@
                 <br> Commentaire : {{ evaluation.commentaire }}
                 <br> Soumis le : {{ evaluation.date_creation }}
 
-                {% if evaluation.date_creation|timesince > "0:00:30" %}
-                    <a href="{% url 'modifier_evaluation' evaluation.id %}" class="btn btn-primary">Modifier</a>
-                    <a href="{% url 'supprimer_evaluation' evaluation.id %}" class="btn btn-danger">Supprimer</a>
+                {% if evaluation.date_creation|timesince > "22:30:00" %}
+                    <a href="{% url 'evaluationProf:modifier_evaluation' evaluation.id %}" class="btn btn-primary">Modifier</a>
+                    <a href="{% url 'evaluationProf:supprimer_evaluation' evaluation.id %}" class="btn btn-danger">Supprimer</a>
                 {% else %}
                     <p><em>Modification et suppression non autorisées (délai expiré).</em></p>
                 {% endif %}
