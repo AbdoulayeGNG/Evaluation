@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <h1>
+            Supprimer un Professeur
+            <small>{{ professeur.user.get_full_name }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'administration:dashboard' %}"><i class="fa fa-dashboard"></i> Tableau de bord</a></li>
+            <li><a href="{% url 'administration:liste_professeurs' %}">Professeurs</a></li>
+            <li><a href="{% url 'administration:detail_professeur' professeur.pk %}">Détails</a></li>
+            <li class="active">Supprimer</li>
+        </ol>
+    </section>
+
+    <section class="content">
+        <div class="box box-danger">
+            <div class="box-header with-border">
+                <h3 class="box-title">Confirmation de suppression</h3>
+            </div>
+            
+            <div class="box-body">
+                <div class="alert alert-warning">
+                    <h4><i class="icon fa fa-warning"></i> Attention!</h4>
+                    Êtes-vous sûr de vouloir supprimer définitivement ce professeur ?
+                    <p>Cette action est irréversible et supprimera également :</p>
+                    <ul>
+                        <li>Toutes les formations créées par ce professeur</li>
+                        <li>Toutes les évaluations associées à ses formations</li>
+                        <li>Le compte utilisateur</li>
+                        <li>Toutes les données personnelles</li>
+                    </ul>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th style="width:150px">Nom complet</th>
+                            <td>{{ professeur.prenom}} {{ professeur.nom}}</td>
+                        </tr>
+                    
+                        <tr>
+                            <th>Email</th>
+                            <td>{{ professeur.user.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Département</th>
+                            <td>{{ professeur.departement }}</td>
+                        </tr>
+                        <tr>
+                            <th>Téléphone</th>
+                            <td>{{ professeur.user.username }}</td>
+                    </table>
+                </div>
+            </div>
+
+            <div class="box-footer">
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fa fa-trash"></i> Confirmer la suppression
+                    </button>
+                    <a href="{% url 'administration:detail_professeur' professeur.pk %}" class="btn btn-default">
+                        <i class="fa fa-times"></i> Annuler
+                    </a>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

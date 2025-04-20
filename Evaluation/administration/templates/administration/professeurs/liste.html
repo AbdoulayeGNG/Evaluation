@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <h1>Gestion des Professeurs</h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'administration:dashboard' %}"><i class="fa fa-dashboard"></i> Tableau de bord</a></li>
+            <li class="active">Professeurs</li>
+        </ol>    
+        <a href="{% url 'administration:ajouter_professeur' %}" class="btn btn-primary">
+            <i class="fa fa-plus"></i> Ajouter un professeur
+        </a>
+    </section>
+
+    <section class="content">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="box">
+            <div class="box-body">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Département</th>
+                            <th>Téléphone</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for professeur in professeurs %}
+                        <tr>
+                            <td>{{ professeur.nom }} {{ professeur.prenom }}</td>
+                            <td>{{ professeur.user.email }}</td>
+                            <td>{{ professeur.departement }}</td>
+                            <td>{{ professeur.user.username }}</td>
+                            <td>
+                                <a href="{% url 'administration:detail_professeur' professeur.pk %}" class="btn btn-info btn-sm">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <a href="{% url 'administration:modifier_professeur' professeur.pk %}" class="btn btn-warning btn-sm">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a href="{% url 'administration:supprimer_professeur' professeur.pk %}" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

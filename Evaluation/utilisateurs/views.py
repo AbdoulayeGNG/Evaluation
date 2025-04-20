@@ -103,11 +103,11 @@ def CreationCompte(request):
 
         # Rediriger vers le tableau de bord approprié
         if role == 'etudiant':
-            return redirect('evaluationProf:ajouter_evaluation')
+            return redirect('etudiants:dashboard_etudiant')
         elif role == 'professeur':
-            return redirect('utilisateurs:accueil')
+            return redirect('prof:dashboard_professeur')
         elif role == 'admin':
-            return redirect('utilisateurs:accueil')
+            return redirect('administration:dashboard')
 
     # Si méthode GET, afficher le formulaire
     return render(request, 'user/register.html')
@@ -126,12 +126,12 @@ def connecter(request):
             login(request, utilisateur)
             # Redirection selon le rôle
             if hasattr(utilisateur, 'etudiant'):
-                return redirect('utilisateurs:accueil')
+                return redirect('etudiants:dashboard_etudiant')
             elif hasattr(utilisateur, 'professeur'):
-                return redirect('utilisateurs:accueil')
+                return redirect('prof:dashboard_professeur')
             elif hasattr(utilisateur, 'administrateur'):
                 return redirect('admin_dashboard')
-            return redirect('utilisateurs:accueil')
+            return redirect('administration:dashboard')
 
     # Afficher le formulaire de connexion
     return render(request, 'user/login.html')
@@ -179,7 +179,7 @@ def inscription(request):
         elif role == 'professeur':
             Professeur.objects.create(user=user, email=email, departement=request.POST.get('departement'))
         elif role == 'admin':
-            Administrateur.objects.create(user=user)
+            Administrateur.objects.create(user=user,telephone=request.POST.get('telephone'), email=email)
 
         login(request, user)  # Connexion automatique après l'inscription
         return JsonResponse({"message": "Utilisateur créé avec succès", "role": role}, status=201)

@@ -10,6 +10,8 @@ urlpatterns = [
     path('', include(('utilisateurs.urls', 'utilisateurs'), namespace='utilisateurs')),
     path('', include(('evaluationProf.urls', 'evaluationProf'), namespace='evaluationProf')),
     path('', include(('etudiants.urls', 'etudiants'), namespace='etudiants')),
+    path('prof/', include(('prof.urls', 'prof'), namespace='prof')),
+    path('administration/', include(('administration.urls', 'administration'), namespace='administration')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+{% load prof_extras %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Tableau de Bord du Professeur</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        {% if error %}
+            <div class="alert alert-danger">
+                <h5><i class="fas fa-exclamation-triangle"></i> Erreur</h5>
+                <p>{{ error }}</p>
+                {% if debug_info %}
+                <hr>
+                <pre>{{ debug_info|pprint }}</pre>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="container-fluid">
+                <!-- Statistics Cards -->
+                <div class="row">
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ total_evaluations }}</h3>
+                                <p>Total Évaluations</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                <h3>{{ moyenne_generale }}/5</h3>
+                                <p>Note Moyenne</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3>{{ stats_mensuelles }}</h3>
+                                <p>Évaluations ce mois</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Evaluations Table -->
+                {% if evaluations_recentes %}
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Dernières Évaluations</h3>
+                        </div>
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Formation</th>
+                                        <th>Note Moyenne</th>
+                                        <th>Détails</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for evaluation in evaluations_recentes %}
+                                    <tr>
+                                        <td>{{ evaluation.date_creation|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ evaluation.formation.nom }}</td>
+                                        <td>
+                                            <div class="progress progress-xs">
+                                                <div class="progress-bar bg-success" role="progressbar" 
+                                                     style="width: {% widthratio evaluation.notes.all|moyenne_notes 5 100 %}%">
+                                                </div>
+                                            </div>
+                                            <small>
+                                                {{ evaluation.notes.all|moyenne_notes|floatformat:1 }}/5
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i> Voir
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <h5><i class="icon fas fa-info"></i> Information</h5>
+                        <p>Aucune évaluation validée n'est disponible pour le moment.</p>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

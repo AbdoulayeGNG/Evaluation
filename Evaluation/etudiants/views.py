@@ -34,17 +34,14 @@ def evaluationEtudiantTout(request):
         'formation',
         'formation__professeur'
     ).prefetch_related(
-        'notes',  # Utilisation du related_name défini dans le modèle
+        'notes',
         'notes__critere'
     ).order_by('-date_creation')
 
     context = {
-        'evaluations': evaluations,
-        'total_evaluations': evaluations.count(),
-        'evaluations_en_attente': evaluations.filter(statut='en_attente').count(),
-        'profs_evalues': evaluations.values('formation__professeur').distinct().count(),
+        'evaluations': evaluations
     }
-
+    
     return render(request, 'etudiants/evaluationEtudiant.html', context)
 
 

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.utils import timezone
 
 class Utilisateur(AbstractUser):
     ROLES = [
@@ -43,19 +44,34 @@ class Etudiant(models.Model):
 # Modèle Professeur
 class Professeur(models.Model):
     user = models.OneToOneField(Utilisateur, on_delete=models.CASCADE)
-    nom=models.CharField(max_length=50)
-    prenom=models.CharField(max_length=100)
     departement = models.CharField(max_length=100)
+    nom=models.CharField(max_length=100, null=True, blank=True)
+    prenom=models.CharField(max_length=100, null=True, blank=True)
+    photo = models.ImageField(upload_to='professeurs/', null=True, blank=True)
+    specialite = models.CharField(max_length=100, null=True, blank=True)
+    grade = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
-        return f"Prof: {self.prenom} - {self.departement}"
+        return f"Prof: {self.user.get_full_name()} - {self.departement}"
+
+    class Meta:
+        verbose_name = "Professeur"
+        verbose_name_plural = "Professeurs"
 
 # Modèle Administrateur
 class Administrateur(models.Model):
     user = models.OneToOneField(Utilisateur, on_delete=models.CASCADE)
-    nom=models.CharField(max_length=50)
-    prenom=models.CharField(max_length=100)
-    contact=models.CharField(max_length=15)
-    
+    contact = models.CharField(max_length=20, null=True, blank=True)
+    nom = models.CharField(max_length=100, null=True, blank=True)
+    prenom = models.CharField(max_length=100, null=True, blank=True)
+    photo = models.ImageField(upload_to='administrateurs/', null=True, blank=True)
+    fonction = models.CharField(max_length=100, default='Administrateur')
+    date_creation = models.DateTimeField(auto_now_add=True)
+    date_modification = models.DateTimeField(auto_now=True)
+
     def __str__(self):
-        return f"Admin: {self.user.username}"
+        return f"Admin: {self.user.get_full_name()}"
+
+    class Meta:
+        verbose_name = "Administrateur"
+        verbose_name_plural = "Administrateurs"

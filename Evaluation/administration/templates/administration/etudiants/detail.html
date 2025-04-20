@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <h1>
+            Détails de l'étudiant
+            <small>{{ etudiant.user.get_full_name }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'administration:dashboard' %}"><i class="fa fa-dashboard"></i> Tableau de bord</a></li>
+            <li><a href="{% url 'administration:liste_etudiants' %}">Étudiants</a></li>
+            <li class="active">Détails</li>
+        </ol>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <!-- Profile de l'étudiant -->
+            <div class="col-md-4">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        {% if etudiant.photo %}
+                            <img class="profile-user-img img-responsive img-circle" 
+                                 src="{{ etudiant.photo.url }}" 
+                                 alt="Photo"
+                                 style="width: 100px; height: 100px; object-fit: cover;"> <!-- Ajout des styles -->
+                        {% else %}
+                            <img class="profile-user-img img-responsive img-circle" 
+                                 src="/static/img/default-user.png" 
+                                 alt="Photo"
+                                 style="width: 100px; height: 100px; object-fit: cover;"> <!-- Ajout des styles -->
+                        {% endif %}
+
+                        <h3 class="profile-username text-center">{{ etudiant.user.get_full_name }}</h3>
+                        <p class="text-muted text-center">{{ etudiant.departement }} - {{ etudiant.licence }}</p>
+
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <b>Matricule</b> <span class="pull-right">{{ etudiant.user.username }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Email</b> <span class="pull-right">{{ etudiant.user.email }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Département</b> <span class="pull-right">{{ etudiant.departement }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Licence</b> <span class="pull-right">{{ etudiant.licence }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Téléphone</b> <span class="pull-right">{{ etudiant.telephone }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Total évaluations</b> <span class="pull-right">{{ stats.total_evaluations }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Note moyenne</b> <span class="pull-right">{{ stats.moyenne_notes|floatformat:2 }}/5</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Statut</b> 
+                                <span class="pull-right">
+                                    {% if etudiant.user.is_active %}
+                                        <span class="label label-success">Actif</span>
+                                    {% else %}
+                                        <span class="label label-danger">Inactif</span>
+                                    {% endif %}
+                                </span>
+                            </li>
+                        </ul>
+
+                        <div class="btn-group btn-group-justified">
+                            <a href="{% url 'administration:modifier_etudiant' etudiant.pk %}" class="btn btn-warning">
+                                <i class="fa fa-edit"></i> Modifier
+                            </a>
+                            <a href="{% url 'administration:supprimer_etudiant' etudiant.pk %}" class="btn btn-danger">
+                                <i class="fa fa-trash"></i> Supprimer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des évaluations -->
+            <div class="col-md-8">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Évaluations réalisées</h3>
+                    </div>
+                    <div class="box-body">
+                        <table class="table table-bordered table-striped datatable">
+                            <thead>
+                                <tr>
+                                    <th>Formation</th>
+                                    <th>Date</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for evaluation in evaluations %}
+                                <tr>
+                                    <td>{{ evaluation.formation.nom }}</td>
+                                    <td>{{ evaluation.date_creation|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        <span class="label {% if evaluation.statut == 'validé' %}label-success{% else %}label-warning{% endif %}">
+                                            {{ evaluation.statut }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">Aucune évaluation réalisée</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.datatable').DataTable({
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json"
+        },
+        "order": [[2, "desc"]]
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <h1>
+            Détails du Professeur
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'administration:dashboard' %}"><i class="fa fa-dashboard"></i> Tableau de bord</a></li>
+            <li><a href="{% url 'administration:liste_professeurs' %}">Professeurs</a></li>
+            <li class="active">Détails</li>
+        </ol>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <!-- Profil du professeur -->
+         <main class="col-md-12 ms-sm-auto col-lg-12 px-md-2">
+            <div class="col-md-5">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        {% if professeur.photo %}
+                            <img class="profile-user-img img-responsive img-circle" 
+                                 src="{{ professeur.photo.url }}" 
+                                 alt="Photo"
+                                 style="width: 100px; height: 100px; object-fit: cover;">
+                        {% else %}
+                            <img class="profile-user-img img-responsive img-circle" 
+                                 src="/static/img/default-user.png" 
+                                 alt="Photo"
+                                 style="width: 100px; height: 100px; object-fit: cover;">
+                        {% endif %}
+                        
+                        <h3 class="profile-username text-center">{{ professeur.user.get_full_name }}</h3>
+                        <p class="text-muted text-center">{{ professeur.departement }}</p>
+
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <b>Nom complet</b> <span class="pull-right">{{ professeur.prenom }} {{ professeur.nom }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Email</b> <span class="pull-right">{{ professeur.user.email }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Département</b> <span class="pull-right">{{ professeur.departement }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Téléphone</b> <span class="pull-right">{{ professeur.user.username }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Date d'inscription</b> <span class="pull-right">{{ professeur.user.date_joined|date:"d/m/Y" }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Dernière connexion</b> <span class="pull-right">{{ professeur.user.last_login|date:"d/m/Y H:i" }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Total Formations</b> <span class="pull-right">{{ stats.total_formations }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Total Évaluations</b> <span class="pull-right">{{ stats.total_evaluations }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Note moyenne</b> <span class="pull-right">{{ stats.moyenne_evaluations|floatformat:1 }}/5</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Statut</b> 
+                                <span class="pull-right">
+                                    {% if professeur.user.is_active %}
+                                        <span class="label label-success">Actif</span>
+                                    {% else %}
+                                        <span class="label label-danger">Inactif</span>
+                                    {% endif %}
+                                </span>
+                            </li>
+                        </ul>
+
+                        <a href="{% url 'administration:modifier_professeur' professeur.pk %}" class="btn btn-primary btn-block">
+                            <i class="fa fa-edit"></i> Modifier
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations détaillées -->
+            <div class="col-md-7">
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#formations" data-toggle="tab">Formations</a></li>
+                        <li><a href="#evaluations" data-toggle="tab">Évaluations</a></li>
+                        <li><a href="#statistiques" data-toggle="tab">Statistiques</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <!-- Onglet Formations -->
+                        <div class="active tab-pane" id="formations">
+                            <div class="box-body">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom de la formation</th>
+                                            <th>Nombre d'évaluations</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for formation in formations %}
+                                        <tr>
+                                            <td>{{ formation.nom }}</td>
+                                            <td>{{ formation.evaluation_set.count }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="3" class="text-center">Aucune formation enregistrée</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Onglet Évaluations -->
+                        <div class="tab-pane" id="evaluations">
+                            <div class="box-body">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Formation</th>
+                                            <th>Date</th>
+                                            <th>Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for evaluation in evaluations %}
+                                        <tr>
+                                            <td>{{ evaluation.formation.nom }}</td>
+                                            <td>{{ evaluation.date_creation|date:"d/m/Y" }}</td>
+                                            <td>
+                                                <span class="label {% if evaluation.statut == 'validé' %}label-success{% else %}label-warning{% endif %}">
+                                                    {{ evaluation.statut }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="5" class="text-center">Aucune évaluation enregistrée</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Onglet Statistiques -->
+                        <div class="tab-pane" id="statistiques">
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="info-box">
+                                            <span class="info-box-icon bg-aqua"><i class="fa fa-star"></i></span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text">Note moyenne</span>
+                                                <span class="info-box-number">{{ stats.moyenne_evaluations|floatformat:1 }}/5</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.table').DataTable({
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json"
+        }
+    });
+});
+</script>
+{% endblock %}

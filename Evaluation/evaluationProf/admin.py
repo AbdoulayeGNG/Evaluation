@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Formation, Critere,NoteCritere,Evaluation
-# Register your models here.
+from .models import Formation,Evaluation,NoteCritere,Critere
+
 admin.site.register(Formation)
-admin.site.register(Critere)
-admin.site.register(NoteCritere)
 admin.site.register(Evaluation)
+admin.site.register(Critere)
+

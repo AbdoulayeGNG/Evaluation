@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1><i class="fas fa-user-tie mr-2"></i>Mon Profil</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'prof:dashboard_professeur' %}">Accueil</a></li>
+                        <li class="breadcrumb-item active">Profil</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Photo de profil -->
+                        <div class="text-center mb-4">
+                            <form method="post" enctype="multipart/form-data" id="photo-form">
+                                {% csrf_token %}
+                                <div class="profile-image-container">
+                                    {% if user.professeur.photo %}
+                                        <img class="profile-image" src="{{ MEDIA_URL }}{{ user.professeur.photo }}" alt="Photo de profil">
+                                    {% else %}
+                                        <img class="profile-user-img img-fluid img-circle" src="{% static 'dist/img/default-profile.png' %}" alt="Photo par défaut">
+                                    {% endif %}
+                                    <label class="profile-image-upload" title="Changer la photo">
+                                        <input type="file" name="photo" accept="image/*" onchange="this.form.submit()">
+                                        <i class="fa fa-camera"></i>
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Informations -->
+                        <div class="info-container">
+                            <div class="info-item">
+                                <label><i class="fas fa-user mr-2"></i>Nom complet:</label>
+                                <label>{{ user.professeur.prenom }} {{ user.professeur.nom }}</label>
+                            </div>
+
+                            <div class="info-item">
+                                <label><i class="fas fa-id-card mr-2"></i>Matricule:</label>
+                                <label>{{ user.username }}</label>
+                            </div>
+
+                            
+                            <div class="info-item">
+                                <label><i class="fas fa-building mr-2"></i>Département:</label>
+                                <label>{{ user.professeur.departement }}</label>
+                            </div>
+
+                            <div class="info-item">
+                                <label><i class="fas fa-phone mr-2"></i>Contact:</label>
+                                <label>{{ user.professeur.telephone }}</label>
+                            </div>
+
+                            <div class="info-item">
+                                <label><i class="fas fa-envelope mr-2"></i>Email:</label>
+                                <label>{{ user.email }}</label>
+                            </div>
+
+                            <div class="info-item">
+                                <label><i class="fas fa-calendar mr-2"></i>Date d'inscription:</label>
+                                <label>{{ user.date_joined|date:"d/m/Y" }}</label>
+                            </div>
+
+                            <div class="info-item">
+                                <label><i class="fas fa-star mr-2"></i>Total Évaluations:</label>
+                                <label>{{ total_evaluations }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-image-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+
+.profile-user-img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.profile-image-upload {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #3c8dbc;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.profile-image-upload:hover {
+    background: #367fa9;
+}
+
+.profile-image-upload input[type="file"] {
+    display: none;
+}
+
+.profile-image-upload i {
+    color: white;
+    font-size: 18px;
+}
+
+.info-container {
+    margin-top: 20px;
+}
+
+.info-item {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item label {
+    color: #666;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.info-item label:last-child {
+    color: #333;
+    font-weight: normal;
+}
+
+.card {
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .info-item label:last-child {
+        padding-left: 25px;
+    }
+}
+</style>
+{% endblock %}

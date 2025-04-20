@@ -41,7 +41,7 @@
                                 <div class="profile-image-container">
                                     {% if user.etudiant.photo %}
                                     <img class="profile-image" src="{{ MEDIA_URL }}{{ user.etudiant.photo }}" alt="Photo de profil">
-                                    {% else %}
+                                {% else %}
                                         <img class="profile-user-img img-fluid img-circle" src="{% static 'dist/img/default-profile.png' %}" alt="Photo par défaut">
                                     {% endif %}
                                     <label class="profile-image-upload" title="Changer la photo">

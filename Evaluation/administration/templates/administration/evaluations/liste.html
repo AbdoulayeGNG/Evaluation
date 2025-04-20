@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <h1>
+            Gestion des Évaluations
+            <small>Évaluations en attente</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'administration:dashboard' %}"><i class="fa fa-dashboard"></i> Tableau de bord</a></li>
+            <li class="active">Évaluations</li>
+        </ol>
+    </section>
+
+    <section class="content">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Liste des évaluations en attente</h3>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="box-body">
+                <table class="table table-bordered table-striped datatable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Étudiant</th>
+                            <th>Formation</th>
+                            <th>Notes par critère</th>
+                            <th>Commentaire</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for evaluation in evaluations %}
+                        <tr>
+                            <td>{{ evaluation.date_creation|date:"d/m/Y H:i" }}</td>
+                            <td>{{ evaluation.etudiant.get_full_name }}</td>
+                            <td>{{ evaluation.formation.nom }}</td>
+                    
+                            <td>
+                                {% for note in evaluation.notes.all %}
+                                    <span class="label label-info">
+                                        {{ note.critere.nom }}: {{ note.note }}/5
+                                    </span>
+                                {% endfor %}
+                            </td>
+                            <td>{{ evaluation.commentaire|truncatechars:50 }}</td>
+                            <td>
+                                <span class="label {% if evaluation.statut == 'validé' %}label-success{% else %}label-warning{% endif %}">
+                                    {{ evaluation.statut }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <form method="post" action="{% url 'administration:valider_evaluation' evaluation.pk %}" 
+                                      style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" name="action" value="valider" 
+                                            class="btn btn-success btn-sm" title="Valider">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                    <button type="submit" name="action" value="rejeter" 
+                                            class="btn btn-danger btn-sm" title="Rejeter">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">Aucune évaluation en attente</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.datatable').DataTable({
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json"
+        },
+        "order": [[0, "desc"]],
+        "pageLength": 25,
+        "scrollX": true
+    });
+});
+</script>
+{% endblock %}

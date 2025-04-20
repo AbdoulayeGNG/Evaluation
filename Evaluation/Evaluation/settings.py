@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,6 +14,7 @@ SECRET_KEY = 'django-insecure-02%q=w+_@%8^8%xb&aza&eg!c$#5jh$(9)3_v7y)vyu^d7*1b(
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -29,7 +31,9 @@ INSTALLED_APPS = [
     'utilisateurs',
     'etudiants',
     'prof',
-    'evaluationProf'
+    'administration',
+    'evaluationProf',
+    'prof.templatetags',
 ]
 
 MIDDLEWARE = [
@@ -72,9 +76,9 @@ WSGI_APPLICATION = 'Evaluation.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'evaluation',  # Remplace par le nom de ta base de données
+        'NAME': 'evaluations',  # Remplace par le nom de ta base de données
         'USER': 'root',  # Remplace par ton utilisateur MySQL
-        'PASSWORD': '123456@Ma',  # Remplace par ton mot de passe MySQL
+        'PASSWORD': '',  # Remplace par ton mot de passe MySQL
         'HOST': 'localhost',  # Ou l'IP de ton serveur MySQL
         'PORT': '3306',  # Port par défaut de MySQL
         'OPTIONS': {
@@ -134,6 +138,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'utilisateurs.Utilisateur'
 LOGIN_REDIRECT_URL = 'home'
 
+LOGIN_URL = 'utilisateurs:connecter'
+LOGIN_REDIRECT_URL = 'utilisateurs:accueil'
+LOGOUT_REDIRECT_URL = 'utilisateurs:accueil'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -141,3 +148,32 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'abdelgnegouran923@gmail.com'  # Remplacez par votre adresse Gmail
 EMAIL_HOST_PASSWORD = '@283541@Ma'  # Remplacez par votre mot de passe Gmail
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'prof.views': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}

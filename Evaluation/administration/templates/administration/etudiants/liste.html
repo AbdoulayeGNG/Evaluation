@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <h1>
+            Gestion des Étudiants
+            <small>Liste des étudiants</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'administration:dashboard' %}"><i class="fa fa-dashboard"></i> Tableau de bord</a></li>
+            <li class="active">Étudiants</li>
+        </ol>
+    </section>
+
+    <section class="content">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Liste des étudiants</h3>
+                <div class="box-tools">
+                    <a href="{% url 'administration:ajouter_etudiant' %}" class="btn btn-primary">
+                        <i class="fa fa-plus"></i> Ajouter un étudiant
+                    </a>
+                </div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="box-body">
+                <table class="table table-bordered table-striped datatable">
+                    <thead>
+                        <tr>
+                            <th>Matricule</th>
+                            <th>Nom complet</th>
+                            <th>Email</th>
+                            <th>Département</th>
+                            <th>Licence</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for etudiant in etudiants %}
+                        <tr>
+                            <td>{{ etudiant.user.username }}</td>
+                            <td>{{ etudiant.prenom }} {{ etudiant.prenom }}</td>
+                            <td>{{ etudiant.user.email }}</td>
+                            <td>{{ etudiant.departement }}</td>
+                            <td>{{ etudiant.licence }}</td>
+                            <td>
+                                {% if etudiant.user.is_active %}
+                                    <span class="label label-success">Actif</span>
+                                {% else %}
+                                    <span class="label label-danger">Inactif</span>
+                                {% endif %}
+                            </td>
+                             
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'administration:detail_etudiant' etudiant.pk %}" 
+                                       class="btn btn-info btn-sm" title="Détails">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                      
+                                    <a href="{% url 'administration:modifier_etudiant' etudiant.pk %}" 
+                                       class="btn btn-warning btn-sm" title="Modifier">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                
+                                    <a href="{% url 'administration:supprimer_etudiant' etudiant.pk %}" 
+                                       class="btn btn-danger btn-sm" title="Supprimer">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </div> 
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">Aucun étudiant enregistré</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.datatable').DataTable({
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json"
+        },
+        "pageLength": 25,
+        "order": [[1, "asc"]]
+    });
+});
+</script>
+{% endblock %}

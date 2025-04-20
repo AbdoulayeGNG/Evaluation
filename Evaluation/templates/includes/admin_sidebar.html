@@ -1,0 +1,32 @@
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="header">MENU PRINCIPAL</li>
+            <li>
+                <a href="{% url 'administration:dashboard' %}">
+                    <i class="fa fa-dashboard"></i> <span>Tableau de bord</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'administration:gestion_professeurs' %}">
+                    <i class="fa fa-users"></i> <span>Gestion des professeurs</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'administration:gestion_etudiants' %}">
+                    <i class="fa fa-graduation-cap"></i> <span>Gestion des étudiants</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'administration:gestion_evaluations' %}">
+                    <i class="fa fa-file-text"></i> <span>Gestion des évaluations</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'administration:statistiques' %}">
+                    <i class="fa fa-bar-chart"></i> <span>Statistiques</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+</aside>

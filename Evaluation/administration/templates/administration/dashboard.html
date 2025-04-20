@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <h1>Tableau de bord administrateur</h1>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-lg-3 col-xs-4">
+                <div class="small-box bg-aqua">
+                    <div class="inner">
+                        <h3>{{ total_profs }}</h3>
+                        <p>Professeurs</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-person-stalker"></i>
+                    </div>
+                    <a href="{% url 'administration:gestion_professeurs' %}" class="small-box-footer">
+                        Gérer les professeurs <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-xs-4">
+                <div class="small-box bg-green">
+                    <div class="inner">
+                        <h3>{{ total_etudiants }}</h3>
+                        <p>Étudiants</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-ios-people"></i>
+                    </div>
+                    <a href="{% url 'administration:gestion_etudiants' %}" class="small-box-footer">
+                        Gérer les étudiants <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-xs-4">
+                <div class="small-box bg-yellow">
+                    <div class="inner">
+                        <h3>{{ total_evaluations }}</h3>
+                        <p>Évaluations</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="{% url 'administration:gestion_evaluations' %}" class="small-box-footer">
+                        Voir les évaluations <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Dernières évaluations</h3>
+                    </div>
+                    <div class="box-body">
+                        {% for evaluation in recent_evaluations %}
+                        <div class="info-box">
+                            <span class="info-box-icon bg-aqua">
+                                <i class="fa fa-file-text-o"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">{{ evaluation.formation.nom }}</span>
+                                <span class="info-box-number">{{ evaluation.formation.professeur.nom }} {{ evaluation.formation.professeur.prenom }}</span>
+                                <span class="info-box-text">{{ evaluation.date_creation|date:"d/m/Y" }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

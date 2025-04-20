@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <h1>
+            Modifier un Professeur
+            <small>{{ professeur.user.get_full_name }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'administration:dashboard' %}"><i class="fa fa-dashboard"></i> Tableau de bord</a></li>
+            <li><a href="{% url 'administration:liste_professeurs' %}">Professeurs</a></li>
+            <li><a href="{% url 'administration:detail_professeur' professeur.pk %}">Détails</a></li>
+            <li class="active">Modifier</li>
+        </ol>
+    </section>
+
+    <section class="content">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Informations du professeur</h3>
+            </div>
+
+            <form method="post" class="form-horizontal">
+                {% csrf_token %}
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="box-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Nom</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="nom" class="form-control" value="{{ professeur.user.last_name }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Prénom</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="prenom" class="form-control" value="{{ professeur.user.first_name }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Email</label>
+                        <div class="col-sm-10">
+                            <input type="email" name="email" class="form-control" value="{{ professeur.user.email }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Département</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="departement" class="form-control" value="{{ professeur.departement }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Téléphone</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="matricule" class="form-control" value="{{ professeur.user.username }}" required readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Nouveau mot de passe</label>
+                        <div class="col-sm-10">
+                            <input type="password" name="password" class="form-control" placeholder="Laisser vide pour ne pas modifier">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                        <a href="{% url 'administration:detail_professeur' professeur.pk %}" class="btn btn-default">Annuler</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+{% endblock %}
