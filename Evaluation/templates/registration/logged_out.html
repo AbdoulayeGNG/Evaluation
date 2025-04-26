@@ -1,0 +1,56 @@
+{% extends 'header.html' %}
+{% load static %}
+
+{% block content %}
+<div class="logout-container">
+    <div class="logout-box">
+        <div class="text-center">
+            <i class="fa fa-check-circle text-success fa-4x"></i>
+            <h3 class="mt-3">Déconnexion réussie</h3>
+            <p class="text-muted">Vous avez été déconnecté avec succès.</p>
+            
+            <div class="mt-4">
+                <a href="{% url 'utilisateurs:login' %}" class="btn btn-primary">
+                    <i class="fa fa-sign-in"></i> Se reconnecter
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.logout-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.logout-box {
+    background: #fff;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.text-success {
+    color: #28a745;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mt-4 {
+    margin-top: 1.5rem;
+}
+
+.text-muted {
+    color: #6c757d;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Modifier le Semestre</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'administration:dashboard' %}">Accueil</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'administration:gestion_semestres' %}">Semestres</a></li>
+                        <li class="breadcrumb-item active">Modifier</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Modifier le semestre</h3>
+                </div>
+                
+                <form method="post" class="form-horizontal">
+                    {% csrf_token %}
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Année Universitaire *</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="annee_universitaire" 
+                                       class="form-control" 
+                                       value="{{ semestre.annee_universitaire }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Semestre *</label>
+                            <div class="col-sm-9">
+                                <select name="semestre" class="form-control" required>
+                                    <option value="S1" {% if semestre.semestre == 'S1' %}selected{% endif %}>Semestre 1</option>
+                                    <option value="S2" {% if semestre.semestre == 'S2' %}selected{% endif %}>Semestre 2</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Date de début *</label>
+                            <div class="col-sm-9">
+                                <input type="date" name="date_debut" 
+                                       class="form-control"
+                                       value="{{ semestre.date_debut|date:'Y-m-d' }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Date de fin *</label>
+                            <div class="col-sm-9">
+                                <input type="date" name="date_fin" 
+                                       class="form-control"
+                                       value="{{ semestre.date_fin|date:'Y-m-d' }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Début des évaluations *</label>
+                            <div class="col-sm-9">
+                                <input type="date" name="periode_evaluation_debut" 
+                                       class="form-control"
+                                       value="{{ semestre.periode_evaluation_debut|date:'Y-m-d' }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Fin des évaluations *</label>
+                            <div class="col-sm-9">
+                                <input type="date" name="periode_evaluation_fin" 
+                                       class="form-control"
+                                       value="{{ semestre.periode_evaluation_fin|date:'Y-m-d' }}"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-save"></i> Enregistrer
+                        </button>
+                        <a href="{% url 'administration:gestion_semestres' %}" class="btn btn-default">
+                            <i class="fa fa-times"></i> Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

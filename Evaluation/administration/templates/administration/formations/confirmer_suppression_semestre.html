@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Confirmation de suppression</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'administration:dashboard' %}">Accueil</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'administration:gestion_semestres' %}">Semestres</a></li>
+                        <li class="breadcrumb-item active">Supprimer</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-danger">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fa fa-exclamation-triangle"></i>
+                        Confirmer la suppression
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h5><i class="icon fas fa-warning"></i> Attention !</h5>
+                        <p>Vous êtes sur le point de supprimer le semestre suivant :</p>
+                        <ul>
+                            <li>Année universitaire : {{ semestre.annee_universitaire }}</li>
+                            <li>Semestre : {{ semestre.get_semestre_display }}</li>
+                            <li>Période : du {{ semestre.date_debut|date:"d/m/Y" }} au {{ semestre.date_fin|date:"d/m/Y" }}</li>
+                        </ul>
+                        <p>Cette action est irréversible. Êtes-vous sûr de vouloir continuer ?</p>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa fa-trash"></i> Confirmer la suppression
+                        </button>
+                        <a href="{% url 'administration:gestion_semestres' %}" class="btn btn-default">
+                            <i class="fa fa-times"></i> Annuler
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

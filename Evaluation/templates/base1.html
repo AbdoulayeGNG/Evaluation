@@ -19,6 +19,9 @@
     
     <!-- Vos styles personnalisés en dernier pour qu'ils aient la priorité -->
     <link href="{% static 'css/styles.css' %}" rel="stylesheet" type="text/css" />
+  
+    <link rel="stylesheet" href="{% static 'css/evaluation.css' %}">
+
     
     <!-- ...rest of your head content... -->
   </head>
@@ -34,7 +37,20 @@
           <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
           </a>
-        
+          {% if user.is_authenticated %}
+            <div class="navbar-custom-menu">
+              <ul class="nav navbar-nav">
+                <li>
+                  <form method="post" action="{% url 'utilisateurs:logout' %}" class="navbar-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-flat">
+                      <i class="fa fa-sign-out"></i> Déconnexion
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </div>
+          {% endif %}
         </nav>
       </header>
       <!-- Left side column. contains the logo and sidebar -->

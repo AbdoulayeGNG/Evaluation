@@ -1,0 +1,92 @@
+{% extends 'header.html' %}
+
+{% block content %}
+<div class="login-box">
+    <div class="login-logo">
+        <b>Évaluation</b>Plateforme
+    </div>
+    <div class="login-box-body">
+        <p class="login-box-msg">Connectez-vous pour démarrer votre session</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group has-feedback">
+                <input type="text" name="username" class="form-control" placeholder="Nom d'utilisateur" required>
+                <span class="glyphicon glyphicon-user form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <div class="col-xs-8">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="remember"> Se souvenir de moi
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">Connexion</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="social-auth-links text-center">
+            <p>- OU -</p>
+        </div>
+
+        <a href="{% url 'password_reset' %}">Mot de passe oublié ?</a><br>
+    </div>
+</div>
+
+<style>
+.login-box {
+    width: 360px;
+    margin: 7% auto;
+}
+.login-logo {
+    font-size: 35px;
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 300;
+}
+.login-box-body {
+    background: #fff;
+    padding: 20px;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.login-box-msg {
+    margin: 0;
+    text-align: center;
+    padding: 0 20px 20px 20px;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.has-feedback {
+    position: relative;
+}
+.form-control-feedback {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    display: block;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+    pointer-events: none;
+}
+</style>
+{% endblock %}

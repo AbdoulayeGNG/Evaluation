@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-header">
+    <h1>
+        Gestion des Administrateurs
+        <small>Liste des administrateurs</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{% url 'administration:dashboard' %}"><i class="fa fa-dashboard"></i> Accueil</a></li>
+        <li class="active">Administrateurs</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <a href="{% url 'administration:ajouter_administrateur' %}" class="btn btn-primary">
+                <i class="fa fa-plus"></i> Nouvel Administrateur
+            </a>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">Liste des administrateurs ({{ total_admins }})</h3>
+        </div>
+        <div class="box-body table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Photo</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Contact</th>
+                        <th>Email</th>
+                        <th>Date création</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for admin in administrateurs %}
+                    <tr>
+                        <td>
+                            {% if admin.photo %}
+                                <img src="{{ admin.photo.url }}" alt="Photo" class="img-circle" style="width: 50px; height: 50px;">
+                            {% else %}
+                                <img src="{% static 'dist/img/avatar.png' %}" alt="Photo" class="img-circle" style="width: 50px; height: 50px;">
+                            {% endif %}
+                        </td>
+                        <td>{{ admin.nom }}</td>
+                        <td>{{ admin.prenom }}</td>
+                        <td>{{ admin.contact|default:"Non renseigné" }}</td>
+                        <td>{{ admin.user.email }}</td>
+                        <td>{{ admin.date_creation|date:"d/m/Y" }}</td>
+                        <td>
+                            <a href="{% url 'administration:detail_administrateur' admin.id %}" class="btn btn-info btn-sm">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                            <a href="{% url 'administration:modifier_administrateur' admin.id %}" class="btn btn-warning btn-sm">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ admin.id }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+
+                            <!-- Modal de suppression -->
+                            <div class="modal fade" id="deleteModal{{ admin.id }}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger">
+                                            <h4 class="modal-title">Confirmer la suppression</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Êtes-vous sûr de vouloir supprimer l'administrateur "{{ admin.nom }} {{ admin.prenom }}" ?</p>
+                                            <p class="text-danger">
+                                                <i class="fa fa-warning"></i> Cette action est irréversible.
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form method="post" action="{% url 'administration:supprimer_administrateur' admin.id %}">
+                                                {% csrf_token %}
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                                                <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">Aucun administrateur enregistré</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.btn-sm {
+    margin: 0 2px;
+}
+.modal-header .close {
+    color: white;
+    opacity: 0.8;
+}
+.modal-header .close:hover {
+    opacity: 1;
+}
+</style>
+{% endblock %}

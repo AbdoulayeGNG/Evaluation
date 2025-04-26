@@ -1,0 +1,108 @@
+/* Styles pour le bouton de connexion */
+.login-btn {
+    background-color: #3c8dbc;  /* Bleu clair harmonieux */
+    border-color: #367fa9;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: #357ca5;
+    border-color: #2e6da4;
+}
+
+/* Styles pour le bouton de déconnexion */
+.navbar-custom-menu .btn-danger {
+    background-color: #f45c5c;  /* Rouge plus doux */
+    border-color: #f34949;
+    margin-right: 15px;
+    padding: 8px 15px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-custom-menu .btn-danger:hover {
+    background-color: #e74c3c;  /* Rouge plus foncé au hover */
+    border-color: #c0392b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Animation au clic */
+.navbar-custom-menu .btn-danger:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Alignement des icônes */
+.btn i {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .navbar-custom-menu .btn-danger {
+        margin-right: 8px;
+        padding: 6px 12px;
+    }
+}
+
+/* Styles spécifiques pour le template étudiant */
+.student-navbar .navbar-custom-menu .btn-danger {
+    margin-top: 7px;
+    margin-right: 15px;
+    padding: 6px 12px;
+    border-radius: 3px;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.student-navbar .navbar-custom-menu .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Styles pour le conteneur des boutons */
+.admin-button-container {
+    margin-right: 25px !important;  /* Force plus d'espace entre les boutons */
+}
+
+/* Styles pour le bouton admin */
+.admin-link {
+    background: transparent !important;  /* Force la transparence */
+    border: none !important;
+    padding: 8px 15px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.admin-link i {
+    font-size: 24px;  /* Icône plus grande */
+    color: #fff;  /* Couleur blanche pour l'icône */
+}
+
+.admin-link:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.1) !important;  /* Léger effet hover */
+}
+
+/* Ajustements pour le bouton de déconnexion */
+.logout-button-container {
+    margin-right: 15px;
+}
+
+/* Style général pour la navbar */
+.navbar-custom-menu .nav > li {
+    display: flex;
+    align-items: center;
+    height: 50px;  /* Hauteur standard de la navbar */
+}
+
+/* Espacement du formulaire de déconnexion */
+.navbar-custom-menu form {
+    margin: 8px 15px;  /* Augmentation des marges */
+}

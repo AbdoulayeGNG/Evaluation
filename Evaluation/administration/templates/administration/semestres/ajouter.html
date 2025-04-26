@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <h1>Ajouter un Semestre</h1>
+    </section>
+
+    <section class="content">
+        <div class="box box-primary">
+            <form method="post" class="form-horizontal">
+                {% csrf_token %}
+                <div class="box-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Année Universitaire *</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="annee_universitaire" class="form-control" 
+                                   placeholder="Ex: 2024-2025" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Semestre *</label>
+                        <div class="col-sm-10">
+                            <select name="semestre" class="form-control" required>
+                                <option value="S1">Semestre 1</option>
+                                <option value="S2">Semestre 2</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Date de début *</label>
+                        <div class="col-sm-10">
+                            <input type="date" name="date_debut" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Date de fin *</label>
+                        <div class="col-sm-10">
+                            <input type="date" name="date_fin" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Début des évaluations *</label>
+                        <div class="col-sm-10">
+                            <input type="date" name="periode_evaluation_debut" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Fin des évaluations *</label>
+                        <div class="col-sm-10">
+                            <input type="date" name="periode_evaluation_fin" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer">
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                    <a href="{% url 'administration:liste_semestres' %}" class="btn btn-default">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+{% endblock %}

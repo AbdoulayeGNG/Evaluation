@@ -1,82 +1,441 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container-fluid">
-    <section class="content-header">
-        <h1>Tableau de bord administrateur</h1>
-    </section>
+<section class="content-header">
+    <h1>
+        Tableau de bord
+        <small>Statistiques et aperçu général</small>
+    </h1>
+</section>
 
-    <section class="content">
-        <div class="row">
-            <div class="col-lg-3 col-xs-4">
-                <div class="small-box bg-aqua">
-                    <div class="inner">
-                        <h3>{{ total_profs }}</h3>
-                        <p>Professeurs</p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-person-stalker"></i>
-                    </div>
-                    <a href="{% url 'administration:gestion_professeurs' %}" class="small-box-footer">
-                        Gérer les professeurs <i class="fa fa-arrow-circle-right"></i>
-                    </a>
+<section class="content">
+    <!-- Boîtes de statistiques -->
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>{{ total_evaluations }}</h3>
+                    <p>Évaluations</p>
                 </div>
+                <div class="icon">
+                    <i class="fa fa-comments"></i>
+                </div>
+                <a href="{% url 'administration:gestion_evaluations' %}" class="small-box-footer">
+                    Gérer les évaluations <i class="fa fa-arrow-circle-right"></i>
+                </a>
             </div>
-
-            <div class="col-lg-3 col-xs-4">
-                <div class="small-box bg-green">
-                    <div class="inner">
-                        <h3>{{ total_etudiants }}</h3>
-                        <p>Étudiants</p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-ios-people"></i>
-                    </div>
-                    <a href="{% url 'administration:gestion_etudiants' %}" class="small-box-footer">
-                        Gérer les étudiants <i class="fa fa-arrow-circle-right"></i>
-                    </a>
+        </div>
+        
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>{{ total_profs }}</h3>
+                    <p>Professeurs</p>
                 </div>
-            </div>
-
-            <div class="col-lg-3 col-xs-4">
-                <div class="small-box bg-yellow">
-                    <div class="inner">
-                        <h3>{{ total_evaluations }}</h3>
-                        <p>Évaluations</p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-stats-bars"></i>
-                    </div>
-                    <a href="{% url 'administration:gestion_evaluations' %}" class="small-box-footer">
-                        Voir les évaluations <i class="fa fa-arrow-circle-right"></i>
-                    </a>
+                <div class="icon">
+                    <i class="fa fa-user-tie"></i>
                 </div>
+                <a href="{% url 'administration:gestion_professeurs' %}" class="small-box-footer">
+                    Gérer les professeurs <i class="fa fa-arrow-circle-right"></i>
+                </a>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="box">
-                    <div class="box-header">
-                        <h3 class="box-title">Dernières évaluations</h3>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>{{ total_etudiants }}</h3>
+                    <p>Étudiants</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-users"></i>
+                </div>
+                <a href="{% url 'administration:gestion_etudiants' %}" class="small-box-footer">
+                    Gérer les étudiants <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphiques -->
+    <div class="row">
+        <div class="col-md-8 col-sm-12">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Évolution des évaluations</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
                     </div>
-                    <div class="box-body">
-                        {% for evaluation in recent_evaluations %}
-                        <div class="info-box">
-                            <span class="info-box-icon bg-aqua">
-                                <i class="fa fa-file-text-o"></i>
-                            </span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">{{ evaluation.formation.nom }}</span>
-                                <span class="info-box-number">{{ evaluation.formation.professeur.nom }} {{ evaluation.formation.professeur.prenom }}</span>
-                                <span class="info-box-text">{{ evaluation.date_creation|date:"d/m/Y" }}</span>
+                </div>
+                <div class="box-body">
+                    <canvas id="evaluationsChart" style="height: 300px !important;"></canvas>
+                </div>
+                <div class="box-footer">
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-6">
+                            <div class="description-block border-right">
+                                <h5 class="description-header">{{ total_evaluations }}</h5>
+                                <span class="description-text">TOTAL ÉVALUATIONS</span>
                             </div>
                         </div>
-                        {% endfor %}
+                        <div class="col-sm-4 col-xs-6">
+                            <div class="description-block border-right">
+                                <h5 class="description-header" id="moyenneGlobale">-</h5>
+                                <span class="description-text">MOYENNE GÉNÉRALE</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-xs-6">
+                            <div class="description-block">
+                                <h5 class="description-header" id="tendance">-</h5>
+                                <span class="description-text">TENDANCE</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-</div>
+
+        <div class="col-md-4 col-sm-12">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Notes moyennes par département</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <canvas id="departementsChart" style="height: 300px !important;"></canvas>
+                </div>
+                <div class="box-footer">
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-6">
+                            <div class="description-block border-right">
+                                <h5 class="description-header" id="departementMeilleur">-</h5>
+                                <span class="description-text">MEILLEUR DÉPARTEMENT</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-xs-6">
+                            <div class="description-block">
+                                <h5 class="description-header" id="moyenneDepartements">-</h5>
+                                <span class="description-text">MOYENNE GLOBALE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Juste avant la table des dernières évaluations -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Dernières évaluations</h3>
+                    <div class="box-tools">
+                        <form method="get" class="form-inline">
+                            <div class="form-group">
+                                <select name="departement" class="form-control input-sm">
+                                    <option value="">Tous les départements</option>
+                                    {% for dept in departements %}
+                                    <option value="{{ dept }}" {% if selected_departement == dept %}selected{% endif %}>
+                                        {{ dept }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group ml-2">
+                                <select name="periode" class="form-control input-sm">
+                                    <option value="">Toutes les périodes</option>
+                                    <option value="semaine" {% if selected_periode == 'semaine' %}selected{% endif %}>
+                                        7 derniers jours
+                                    </option>
+                                    <option value="mois" {% if selected_periode == 'mois' %}selected{% endif %}>
+                                        30 derniers jours
+                                    </option>
+                                    <option value="trimestre" {% if selected_periode == 'trimestre' %}selected{% endif %}>
+                                        90 derniers jours
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group ml-2">
+                                <select name="tri" class="form-control input-sm">
+                                    <option value="-date_creation" {% if selected_tri == '-date_creation' %}selected{% endif %}>
+                                        Plus récentes
+                                    </option>
+                                    <option value="date_creation" {% if selected_tri == 'date_creation' %}selected{% endif %}>
+                                        Plus anciennes
+                                    </option>
+                                    <option value="-note_moyenne" {% if selected_tri == '-note_moyenne' %}selected{% endif %}>
+                                        Meilleures notes
+                                    </option>
+                                    <option value="note_moyenne" {% if selected_tri == 'note_moyenne' %}selected{% endif %}>
+                                        Notes les plus basses
+                                    </option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-primary ml-2">
+                                <i class="fa fa-filter"></i> Filtrer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="box-body table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Formation</th>
+                                <th>Étudiant</th>
+                                <th>Note</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for evaluation in recent_evaluations %}
+                            <tr>
+                                <td>{{ evaluation.date_creation|date:"d/m/Y H:i" }}</td>
+                                <td>{{ evaluation.formation.nom }}</td>
+                                <td>{{ evaluation.etudiant.nom }} {{ evaluation.etudiant.prenom }}</td>
+                                <td>{{ evaluation.note_moyenne|floatformat:1 }}/5</td>
+                                <td>
+                                    {% if evaluation.statut == 'validé' %}
+                                        <span class="label label-success">Validé</span>
+                                    {% else %}
+                                        <span class="label label-warning">En attente</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.box-tools .form-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.box-tools .form-control {
+    width: auto;
+}
+
+@media (max-width: 768px) {
+    .box-tools .form-inline {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .box-tools .form-group {
+        margin-bottom: 10px;
+    }
+    
+    .box-tools .form-control {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Soumission automatique du formulaire lors des changements
+    const filterForm = document.querySelector('.box-tools form');
+    const filterSelects = filterForm.querySelectorAll('select');
+    
+    filterSelects.forEach(select => {
+        select.addEventListener('change', () => {
+            filterForm.submit();
+        });
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const evalData = {{ evaluations_par_mois|safe }};
+    const deptData = {{ stats_departements|safe }};
+
+    // Graphique d'évolution
+    if (!evalData || !evalData.length) {
+        document.getElementById('evaluationsChart').parentNode.innerHTML = 
+            '<div class="alert alert-info">Aucune donnée d\'évaluation disponible</div>';
+    } else {
+        const evalCtx = document.getElementById('evaluationsChart').getContext('2d');
+        new Chart(evalCtx, {
+            type: 'line',
+            data: {
+                labels: evalData.map(item => {
+                    const date = new Date(item.mois);
+                    return date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+                }),
+                datasets: [{
+                    label: 'Moyenne des notes',
+                    data: evalData.map(item => Number(item.moyenne || 0).toFixed(2)),
+                    borderColor: '#3c8dbc',
+                    backgroundColor: 'rgba(60,141,188,0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    yAxisID: 'y'
+                }, {
+                    label: 'Notes excellentes (5/5)',
+                    data: evalData.map(item => item.notes_5 || 0),
+                    borderColor: '#00a65a',
+                    backgroundColor: 'rgba(0,166,90,0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    yAxisID: 'y1'
+                }, {
+                    label: 'Notes faibles (≤2/5)',
+                    data: evalData.map(item => (item.notes_1 || 0) + (item.notes_2 || 0)),
+                    borderColor: '#f56954',
+                    backgroundColor: 'rgba(245,105,84,0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        min: 0,
+                        max: 5,
+                        title: {
+                            display: true,
+                            text: 'Moyenne /5'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                        title: {
+                            display: true,
+                            text: 'Nombre d\'évaluations'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Mise à jour des statistiques
+        updateEvaluationStats(evalData);
+    }
+
+    // Graphique des départements
+    if (!deptData || !deptData.length) {
+        document.getElementById('departementsChart').parentNode.innerHTML = 
+            '<div class="alert alert-info">Aucune donnée de département disponible</div>';
+    } else {
+        const deptCtx = document.getElementById('departementsChart').getContext('2d');
+        new Chart(deptCtx, {
+            type: 'bar',
+            data: {
+                labels: deptData.map(item => item.departement),
+                datasets: [{
+                    label: 'Moyenne des notes',
+                    data: deptData.map(item => Number(item.moyenne_notes || 0).toFixed(2)),
+                    backgroundColor: ['rgba(0,166,90,0.8)', 'rgba(60,141,188,0.8)', 'rgba(243,156,18,0.8)'],
+                    borderColor: '#00a65a',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 5,
+                        title: {
+                            display: true,
+                            text: 'Moyenne /5'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const item = deptData[context.dataIndex];
+                                return [
+                                    `Moyenne: ${Number(item.moyenne_notes || 0).toFixed(2)}/5`,
+                                    `Évaluations: ${item.nb_evaluations}`
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Mise à jour des statistiques des départements
+        updateDepartmentStats(deptData);
+    }
+});
+
+function updateEvaluationStats(data) {
+    const totalEvals = data.reduce((acc, item) => acc + (item.total || 0), 0);
+    const moyenneGlobale = data.reduce((acc, item) => {
+        return acc + ((item.moyenne || 0) * (item.total || 0));
+    }, 0) / totalEvals || 0;
+
+    document.getElementById('moyenneGlobale').textContent = moyenneGlobale.toFixed(2) + '/5';
+
+    // Calcul de la tendance
+    const derniersMois = data.slice(-2);
+    if (derniersMois.length === 2) {
+        const evolution = derniersMois[1].moyenne - derniersMois[0].moyenne;
+        const tendanceText = evolution > 0 ? 'EN HAUSSE' : evolution < 0 ? 'EN BAISSE' : 'STABLE';
+        const tendanceClass = evolution > 0 ? 'text-success' : evolution < 0 ? 'text-danger' : 'text-warning';
+        const tendanceIcon = evolution > 0 ? 'arrow-up' : evolution < 0 ? 'arrow-down' : 'arrows-h';
+        document.getElementById('tendance').innerHTML = 
+            `<span class="${tendanceClass}"><i class="fa fa-${tendanceIcon}"></i> ${tendanceText}</span>`;
+    }
+}
+
+function updateDepartmentStats(data) {
+    if (data.length > 0) {
+        // Meilleur département
+        const meilleur = data.reduce((prev, current) => 
+            (current.moyenne_notes > prev.moyenne_notes) ? current : prev
+        );
+        document.getElementById('departementMeilleur').textContent = 
+            `${meilleur.departement} (${Number(meilleur.moyenne_notes).toFixed(2)}/5)`;
+
+        // Moyenne globale des départements
+        const moyenneGlobale = data.reduce((acc, dept) => 
+            acc + (dept.moyenne_notes * dept.nb_evaluations), 0
+        ) / data.reduce((acc, dept) => acc + dept.nb_evaluations, 0);
+        document.getElementById('moyenneDepartements').textContent = 
+            moyenneGlobale.toFixed(2) + '/5';
+    }
+}
+</script>
 {% endblock %}

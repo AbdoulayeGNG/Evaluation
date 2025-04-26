@@ -1,0 +1,221 @@
+/* Styles pour la liste des évaluations */
+.comment-preview {
+    max-width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comment-preview a {
+    white-space: nowrap;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.comment-preview a:hover {
+    color: #0056b3;
+}
+
+/* Styles pour le modal */
+.modal-body {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.modal-header.bg-primary {
+    background-color: #007bff !important;
+}
+
+.modal-header.bg-info {
+    background-color: #17a2b8 !important;
+    color: white;
+}
+
+.modal-title {
+    font-size: 1.2rem;
+}
+
+.evaluation-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.evaluation-info p {
+    margin-bottom: 0.5rem;
+}
+
+.evaluation-comment {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.evaluation-comment p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.evaluation-notes .badge {
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+/* Badges et boutons */
+.badge {
+    padding: 3px 6px;
+    font-weight: 500;
+    font-size: 11px;
+    border-radius: 3px;
+}
+
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+}
+
+/* Styles des boutons */
+.btn-group .btn {
+    margin-right: 2px;
+    padding: 0.15rem 0.4rem;
+}
+
+.btn-sm {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    border-radius: 3px;
+}
+
+.btn-link {
+    padding: 0;
+    font-size: 0.75rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 1rem;
+}
+
+.modal-footer .btn {
+    margin-left: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Styles pour le modal d'évaluation */
+.modal-lg {
+    max-width: 900px;
+}
+
+.info-box {
+    min-height: 80px;
+    background: #fff;
+    width: 100%;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.info-box-icon {
+    display: block;
+    float: left;
+    height: 80px;
+    width: 80px;
+    text-align: center;
+    font-size: 45px;
+    line-height: 80px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px 0 0 4px;
+}
+
+.info-box-content {
+    padding: 5px 10px;
+    margin-left: 90px;
+}
+
+.info-box-text {
+    display: block;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+}
+
+.info-box-number {
+    display: block;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.progress-group {
+    margin-bottom: 15px;
+}
+
+.progress-text {
+    font-weight: 600;
+}
+
+.progress {
+    height: 10px;
+    margin-top: 5px;
+    box-shadow: none;
+    background: rgba(0,0,0,0.1);
+}
+
+.card-outline {
+    border-top: 3px solid;
+}
+
+.card-outline.card-info {
+    border-top-color: #17a2b8;
+}
+
+.card-outline.card-warning {
+    border-top-color: #ffc107;
+}
+
+.comment-text {
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .comment-preview {
+        max-width: 150px;
+    }
+    
+    .modal-dialog {
+        margin: 10px;
+    }
+    
+    .btn-sm, 
+    .btn-group .btn {
+        padding: 0.1rem 0.3rem;
+        font-size: 0.7rem;
+    }
+    
+    .badge {
+        padding: 2px 4px;
+        font-size: 10px;
+    }
+}

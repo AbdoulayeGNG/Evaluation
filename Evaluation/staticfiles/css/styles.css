@@ -13,18 +13,35 @@
     left: 0 !important;
     padding-top: 60px !important;
     z-index: 900 !important;
+    transition: transform 0.3s ease-in-out !important;
+    background-color: #222d32 !important;
+}
+
+/* Ajout des styles pour la transition du sidebar */
+.sidebar-collapse .main-sidebar {
+    transform: translate(-230px, 0) !important;
 }
 
 .content-wrapper {
     margin-left: 230px !important;
     padding-top: 50px !important;
     min-height: calc(100vh - 50px) !important;
+    transition: margin-left 0.3s ease-in-out !important;
+}
+
+/* Ajustement du content-wrapper quand le sidebar est caché */
+.sidebar-collapse .content-wrapper {
+    margin-left: 0 !important;
 }
 
 /* Ajustements pour le responsive */
 @media (max-width: 767px) {
     .main-sidebar {
-        padding-top: 100px !important;
+        transform: translate(-230px, 0) !important;
+    }
+    
+    .sidebar-open .main-sidebar {
+        transform: translate(0, 0) !important;
     }
     
     .content-wrapper {

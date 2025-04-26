@@ -44,6 +44,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'administration.middleware.AdminAccessMiddleware',
 ]
 
 ROOT_URLCONF = 'Evaluation.urls'
@@ -113,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'UTC'  # Ou votre fuseau horaire, par exemple 'Europe/Paris'
 
 USE_I18N = True
 
@@ -136,18 +137,20 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'utilisateurs.Utilisateur'
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'home'  # Make sure this matches the URL name
 
-LOGIN_URL = 'utilisateurs:connecter'
-LOGIN_REDIRECT_URL = 'utilisateurs:accueil'
-LOGOUT_REDIRECT_URL = 'utilisateurs:accueil'
+LOGIN_URL = 'utilisateurs:login'
+LOGIN_REDIRECT_URL = None  # On laisse notre vue gérer la redirection
+LOGOUT_REDIRECT_URL = 'utilisateurs:login'
 
+# Configuration email pour la réinitialisation du mot de passe
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'abdelgnegouran923@gmail.com'  # Remplacez par votre adresse Gmail
-EMAIL_HOST_PASSWORD = '@283541@Ma'  # Remplacez par votre mot de passe Gmail
+EMAIL_HOST_USER = 'abdelgnegouran923@gmail.com'
+EMAIL_HOST_PASSWORD = 'rjmo phot rkzu kkfw'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 LOGGING = {
     'version': 1,

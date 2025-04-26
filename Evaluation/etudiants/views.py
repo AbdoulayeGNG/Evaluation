@@ -1,12 +1,15 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from evaluationProf.models import Evaluation, Formation
 from utilisateurs.models import Etudiant, Professeur
 from django.contrib.auth.models import User
 
-# Create your views here.
+def is_etudiant(user):
+    return hasattr(user, 'etudiant')
+
 @login_required
+@user_passes_test(is_etudiant)
 def dashboard_etudiant(request):
     # Récupérer les évaluations avec leurs relations
     evaluations_recentes = Evaluation.objects.filter(
@@ -27,7 +30,8 @@ def dashboard_etudiant(request):
 
 
 @login_required
-def evaluationEtudiantTout(request):
+@user_passes_test(is_etudiant)
+def liste_evaluations(request):
     evaluations = Evaluation.objects.filter(
         etudiant=request.user
     ).select_related(
@@ -46,7 +50,35 @@ def evaluationEtudiantTout(request):
 
 
 @login_required
-def profil(request):
+@user_passes_test(is_etudiant)
+def evaluation_formation(request, formation_id):
+    try:
+        formation = Formation.objects.get(id=formation_id)
+        evaluations = Evaluation.objects.filter(
+            etudiant=request.user,
+            formation=formation
+        ).select_related(
+            'formation',
+            'formation__professeur'
+        ).prefetch_related(
+            'notes',
+            'notes__critere'
+        ).order_by('-date_creation')
+
+        context = {
+            'formation': formation,
+            'evaluations': evaluations
+        }
+        
+        return render(request, 'etudiants/evaluationFormation.html', context)
+    except Formation.DoesNotExist:
+        messages.error(request, "Formation non trouvée")
+        return redirect('etudiants:dashboard_etudiant')
+
+
+@login_required
+@user_passes_test(is_etudiant)
+def profil_etudiant(request):
     if request.method == 'POST':
         if request.FILES.get('photo'):
             etudiant = request.user.etudiant
@@ -62,6 +94,7 @@ def profil(request):
 
 
 @login_required
+@user_passes_test(is_etudiant)
 def update_profile(request):
     if request.method == 'POST':
         user = request.user
@@ -84,6 +117,7 @@ def update_profile(request):
 
 
 @login_required
+@user_passes_test(is_etudiant)
 def liste_professeurs(request):
     try:
         # Récupérer l'étudiant connecté

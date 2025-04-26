@@ -1,0 +1,100 @@
+<!-- Modal de détail d'évaluation -->
+<div class="modal fade" id="commentModal{{ evaluation.id }}">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header bg-info">
+                <h4 class="modal-title text-white">
+                    <i class="fa fa-clipboard-list"></i> Détails de l'évaluation
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Informations générales -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-info"><i class="fa fa-user-graduate"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Étudiant</span>
+                                <span class="info-box-number">{{ evaluation.etudiant.get_full_name }}</span>
+                                <small>Matricule: {{ evaluation.etudiant.matricule }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-success"><i class="fa fa-chalkboard-teacher"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Formation</span>
+                                <span class="info-box-number">{{ evaluation.formation.nom }}</span>
+                                <small>Prof: {{ evaluation.formation.professeur.get_full_name }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes par critère -->
+                <div class="card card-outline card-info mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fa fa-star"></i> Notes par critère
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for note in evaluation.notes.all %}
+                            <div class="col-md-4 mb-2">
+                                <div class="progress-group">
+                                    <span class="progress-text">{{ note.critere.nom }}</span>
+                                    <span class="float-right"><b>{{ note.note }}</b>/5</span>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-primary" style="width: {{ note.note|multiply:20 }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Commentaire -->
+                <div class="card card-outline card-warning">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fa fa-comments"></i> Commentaire
+                        </h3>
+                        <small class="float-right text-muted">
+                            {{ evaluation.date_creation|date:"d/m/Y H:i" }}
+                        </small>
+                    </div>
+                    <div class="card-body">
+                        <div class="comment-text bg-light p-3 rounded">
+                            {{ evaluation.commentaire|linebreaks }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                {% if evaluation.statut == 'en_attente' %}
+                <form method="post" action="{% url 'administration:valider_evaluation' evaluation.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="valider" class="btn btn-success btn-sm">
+                        <i class="fa fa-check"></i> Valider
+                    </button>
+                    <button type="submit" name="action" value="rejeter" class="btn btn-danger btn-sm">
+                        <i class="fa fa-times"></i> Rejeter
+                    </button>
+                </form>
+                {% endif %}
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">
+                    <i class="fa fa-times"></i> Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

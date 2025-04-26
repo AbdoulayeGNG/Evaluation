@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-header">
+    <h1>
+        Gestion des Formations
+        <small>Vue d'ensemble</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{% url 'administration:dashboard' %}"><i class="fa fa-dashboard"></i> Accueil</a></li>
+        <li class="active">Formations</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row mb-3">
+        
+    </div>
+
+    <div class="row">
+        <!-- Statistiques -->
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>{{ total_formations }}</h3>
+                    <p>Total Formations</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-book"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>{{ formations_actives }}</h3>
+                    <p>Formations Actives</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">Liste des Formations</h3>
+            <div class="box-tools">
+                <a href="{% url 'administration:ajouter_formation' %}" class="btn btn-primary btn-sm">
+                    <i class="fa fa-plus"></i> Nouvelle Formation
+                </a>
+            </div>
+        </div>
+        <div class="box-body table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Formation</th>
+                        <th>Département</th>
+                        <th>Semestre</th>
+                        <th>État</th>
+                        <th>Évaluations</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for formation in formations %}
+                    <tr>
+                        <td>{{ formation.nom }}</td>
+                        <td>{{ formation.departement }}</td>
+                        <td>{{ formation.semestre.get_semestre_display }}</td>
+                        <td>
+                            {% if formation.est_evaluable %}
+                                <span class="label label-success">En cours</span>
+                            {% else %}
+                                <span class="label label-default">Fermée</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-blue">{{ formation.evaluation_set.count }}</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{% url 'administration:detail_formation' formation.id %}" 
+                                   class="btn btn-default btn-sm" title="Voir">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <a href="{% url 'administration:modifier_formation' formation.id %}" 
+                                   class="btn btn-info btn-sm" title="Modifier">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm" 
+                                        data-toggle="modal" 
+                                        data-target="#deleteModal{{ formation.id }}"
+                                        title="Supprimer">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+
+                            <!-- Modal de suppression -->
+                            <div class="modal fade" id="deleteModal{{ formation.id }}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger">
+                                            <h4 class="modal-title">Confirmer la suppression</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Êtes-vous sûr de vouloir supprimer la formation "{{ formation.nom }}" ?</p>
+                                            <p class="text-danger">
+                                                <i class="fa fa-warning"></i> 
+                                                Cette action est irréversible et supprimera toutes les évaluations associées.
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form method="post" action="{% url 'administration:supprimer_formation' formation.id %}">
+                                                {% csrf_token %}
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                                                <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">Aucune formation trouvée</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.box-tools {
+    margin-top: 5px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 5px;
+}
+
+.badge {
+    padding: 3px 8px;
+    font-size: 12px;
+}
+
+.label {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+</style>
+{% endblock %}

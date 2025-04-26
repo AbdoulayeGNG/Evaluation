@@ -19,7 +19,7 @@
                 <h3 class="box-title">Formulaire d'ajout d'un étudiant</h3>
             </div>
 
-            <form method="post" class="form-horizontal">
+            <form method="post" class="form-horizontal" enctype="multipart/form-data" action="{% url 'administration:ajouter_etudiant' %}">
                 {% csrf_token %}
                 
                 {% if messages %}

@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-header">
+    <h1>
+        {{ formation.nom }}
+        <small>Détails de la formation</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{% url 'administration:dashboard' %}"><i class="fa fa-dashboard"></i> Accueil</a></li>
+        <li><a href="{% url 'administration:gestion_formations' %}">Formations</a></li>
+        <li class="active">Détails</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <!-- Informations générales -->
+        <div class="col-md-6">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Informations générales</h3>
+                    {% if formation.est_evaluable %}
+                        <span class="label label-success pull-right">En cours d'évaluation</span>
+                    {% else %}
+                        <span class="label label-default pull-right">Fermée</span>
+                    {% endif %}
+                </div>
+                <div class="box-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width: 150px;">Professeur</th>
+                            <td>{{ formation.professeur.user.username }}</td>
+                        </tr>
+                        <tr>
+                            <th>Département</th>
+                            <td>{{ formation.departement }}</td>
+                        </tr>
+                        <tr>
+                            <th>Niveau</th>
+                            <td>{{ formation.get_niveau_display }}</td>
+                        </tr>
+                        <tr>
+                            <th>Semestre</th>
+                            <td>{{ formation.semestre.get_semestre_display }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Description</h3>
+                </div>
+                <div class="box-body">
+                    {{ formation.description|linebreaks }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="small-box bg-aqua">
+                        <div class="inner">
+                            <h3>{{ total_evaluations }}</h3>
+                            <p>Évaluations</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-comments"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="small-box bg-green">
+                        <div class="inner">
+                            <h3>{{ evaluations_validees }}</h3>
+                            <p>Évaluations validées</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des évaluations -->
+            <div class="box box-warning">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Dernières évaluations</h3>
+                </div>
+                <div class="box-body table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Étudiant</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for evaluation in evaluations %}
+                            <tr>
+                                <td>{{ evaluation.date_creation|date:"d/m/Y" }}</td>
+                                <td>{{ evaluation.etudiant.get_full_name }}</td>
+                                <td>
+                                    {% if evaluation.statut == 'validé' %}
+                                        <span class="label label-success">Validé</span>
+                                    {% elif evaluation.statut == 'en_attente' %}
+                                        <span class="label label-warning">En attente</span>
+                                    {% else %}
+                                        <span class="label label-danger">Rejeté</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">Aucune évaluation</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box-footer text-right">
+                <a href="{% url 'administration:modifier_formation' formation.id %}" class="btn btn-warning">
+                    <i class="fa fa-edit"></i> Modifier
+                </a>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                    <i class="fa fa-trash"></i> Supprimer
+                </button>
+                <a href="{% url 'administration:gestion_formations' %}" class="btn btn-default">
+                    <i class="fa fa-arrow-left"></i> Retour
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title">Confirmer la suppression</h4>
+                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer la formation "{{ formation.nom }}" ?</p>
+                <p class="text-danger">
+                    <i class="fa fa-warning"></i> Cette action est irréversible.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <form method="post" action="{% url 'administration:supprimer_formation' formation.id %}">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.box-footer {
+    border-top: 1px solid #f4f4f4;
+    padding: 15px;
+}
+
+.box-footer .btn {
+    margin-left: 10px;
+}
+
+.table th {
+    background-color: #f9f9f9;
+}
+
+.label {
+    font-size: 12px;
+    padding: 5px 10px;
+}
+</style>
+{% endblock %}

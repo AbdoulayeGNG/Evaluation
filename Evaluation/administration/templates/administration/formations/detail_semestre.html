@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-header">
+    <h1>
+        Détails du Semestre
+        <small>{{ semestre.get_semestre_display }} {{ semestre.annee_universitaire }}</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{% url 'administration:dashboard' %}"><i class="fa fa-dashboard"></i> Accueil</a></li>
+        <li><a href="{% url 'administration:gestion_semestres' %}">Semestres</a></li>
+        <li class="active">Détails</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Widget Stats -->
+            <div class="row">
+                <div class="col-lg-3 col-xs-6">
+                    <div class="small-box bg-aqua">
+                        <div class="inner">
+                            <h3>{{ formations.count }}</h3>
+                            <p>Formations</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-book"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-xs-6">
+                    <div class="small-box bg-green">
+                        <div class="inner">
+                            <h3>{{ total_evaluations }}</h3>
+                            <p>Évaluations</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-comments"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-xs-6">
+                    <div class="small-box bg-yellow">
+                        <div class="inner">
+                            <h3>{{ evaluations_validees }}</h3>
+                            <p>Évaluations Validées</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-xs-6">
+                    <div class="small-box bg-red">
+                        <div class="inner">
+                            <h3>{{ pourcentage_validees }}%</h3>
+                            <p>Taux de Validation</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations du semestre -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Informations du Semestre</h3>
+                    <div class="box-tools pull-right">
+                        {% if semestre.est_actif %}
+                            <span class="label label-success">Actif</span>
+                        {% else %}
+                            <span class="label label-default">Inactif</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+                                <dt>Période du semestre</dt>
+                                <dd>Du {{ semestre.date_debut|date:"d/m/Y" }} au {{ semestre.date_fin|date:"d/m/Y" }}</dd>
+                                
+                                <dt>Période d'évaluation</dt>
+                                <dd>Du {{ semestre.periode_evaluation_debut|date:"d/m/Y" }} au {{ semestre.periode_evaluation_fin|date:"d/m/Y" }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des formations -->
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Formations du Semestre</h3>
+                </div>
+                <div class="box-body table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Formation</th>
+                                <th>Professeur</th>
+                                <th>Département</th>
+                                <th>Niveau</th>
+                                <th>Évaluations</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for formation in formations %}
+                            <tr>
+                                <td>{{ formation.nom }}</td>
+                                <td>{{ formation.professeur.username }}</td>
+                                <td>{{ formation.departement }}</td>
+                                <td>{{ formation.niveau }}</td>
+                                <td>
+                                    <span class="badge bg-green">{{ formation.evaluation_set.count }}</span>
+                                </td>
+                                <td>
+                                    {% if formation.est_evaluable %}
+                                        <span class="label label-success">En cours d'évaluation</span>
+                                    {% else %}
+                                        <span class="label label-default">Fermée</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">Aucune formation pour ce semestre</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="box-footer">
+                <a href="{% url 'administration:modifier_semestre' semestre.id %}" class="btn btn-warning">
+                    <i class="fa fa-edit"></i> Modifier
+                </a>
+                <a href="{% url 'administration:gestion_semestres' %}" class="btn btn-default">
+                    <i class="fa fa-arrow-left"></i> Retour
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.small-box {
+    margin-bottom: 20px;
+}
+
+.dl-horizontal dt {
+    width: 160px;
+}
+
+.dl-horizontal dd {
+    margin-left: 180px;
+}
+
+.badge {
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+
+.box-footer {
+    padding: 15px;
+    text-align: right;
+    border-top: 1px solid #f4f4f4;
+}
+
+.box-footer .btn {
+    margin-left: 10px;
+}
+
+.label {
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+</style>
+{% endblock %}

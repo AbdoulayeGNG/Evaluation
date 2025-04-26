@@ -17,6 +17,9 @@
         <div class="box">
             <div class="box-header">
                 <h3 class="box-title">Liste des évaluations en attente</h3>
+                <p class="text-muted">
+                    Nombre total d'évaluations : {{ evaluations|length }}
+                </p>
             </div>
 
             {% if messages %}
@@ -32,7 +35,7 @@
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Étudiant</th>
+        
                             <th>Formation</th>
                             <th>Notes par critère</th>
                             <th>Commentaire</th>
@@ -42,9 +45,19 @@
                     </thead>
                     <tbody>
                         {% for evaluation in evaluations %}
+                        {% if forloop.first %}
+                            <tr>
+                                <td colspan="7" class="bg-light">
+                                    <small class="text-muted">
+                                        Debug: Premier objet evaluation - ID: {{ evaluation.id }}, 
+                                        Étudiant: {{ evaluation.etudiant.nom }}, 
+                                        Formation: {{ evaluation.formation.nom }}
+                                    </small>
+                                </td>
+                            </tr>
+                        {% endif %}
                         <tr>
                             <td>{{ evaluation.date_creation|date:"d/m/Y H:i" }}</td>
-                            <td>{{ evaluation.etudiant.get_full_name }}</td>
                             <td>{{ evaluation.formation.nom }}</td>
                     
                             <td>
@@ -54,7 +67,87 @@
                                     </span>
                                 {% endfor %}
                             </td>
-                            <td>{{ evaluation.commentaire|truncatechars:50 }}</td>
+                            <td>
+                                <div class="comment-preview">
+                                    {{ evaluation.commentaire|truncatechars:15 }}
+                                    <button type="button" 
+                                    class="btn btn-link text-primary ml-2" 
+                                            data-toggle="modal" 
+                                            data-target="#commentModal{{ evaluation.id }}">
+                                        <i class="fa fa-eye"></i> Voir
+                                    </button>
+                                </div>
+
+                                <!-- Modal pour le commentaire -->
+                                <div class="modal fade" id="commentModal{{ evaluation.id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-info">
+                                                <h4 class="modal-title text-white">
+                                                    <i class="fa fa-comment"></i> Détails de l'évaluation
+                                                </h4>
+                                                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- Informations de l'évaluation -->
+                                                <div class="evaluation-info mb-3">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <p><strong>Formation :</strong><br>
+                                                               {{ evaluation.formation.nom }}</p>
+                                                            <strong>Date :</strong><br>
+                                                               {{ evaluation.date_creation|date:"d/m/Y H:i" }}</p>
+                                                            <p><strong>Statut :</strong><br>
+                                                               <span class="badge {% if evaluation.statut == 'validé' %}badge-success
+                                                                                 {% elif evaluation.statut == 'rejeté' %}badge-danger
+                                                                                 {% else %}badge-warning{% endif %}">
+                                                                   {{ evaluation.get_statut_display }}
+                                                               </span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Notes par critère -->
+                                                <div class="evaluation-notes mb-3">
+                                                    <h5>Notes attribuées</h5>
+                                                    <div class="row">
+                                                        {% for note in evaluation.notes.all %}
+                                                        <div class="col-md-6 mb-2">
+                                                            <span class="badge badge-info">
+                                                                {{ note.critere.nom }}: {{ note.note }}/5
+                                                            </span>
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+
+                                                <!-- Commentaire complet -->
+                                                <div class="evaluation-comment">
+                                                    <h5>Commentaire</h5>
+                                                    <div class="p-3 bg-light rounded">
+                                                        <p style="white-space: pre-wrap;">{{ evaluation.commentaire }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                {% if evaluation.statut == 'en_attente' %}
+                                                <form method="post" action="{% url 'administration:valider_evaluation' evaluation.pk %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <button type="submit" name="action" value="valider" class="btn btn-success btn-sm">
+                                                        <i class="fa fa-check"></i> Valider
+                                                    </button>
+                                                    <button type="submit" name="action" value="rejeter" class="btn btn-danger btn-sm">
+                                                        <i class="fa fa-times"></i> Rejeter
+                                                    </button>
+                                                </form>
+                                                {% endif %}
+                                                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Fermer</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
                             <td>
                                 <span class="label {% if evaluation.statut == 'validé' %}label-success{% else %}label-warning{% endif %}">
                                     {{ evaluation.statut }}
@@ -78,7 +171,15 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="8" class="text-center">Aucune évaluation en attente</td>
+                            <td colspan="7" class="text-center">
+                                <div class="alert alert-info">
+                                    Aucune évaluation trouvée. 
+                                    {% if user.is_superuser %}
+                                        <br>
+                                        <small>Note pour admin: Vérifiez la requête dans la vue et les données en base.</small>
+                                    {% endif %}
+                                </div>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

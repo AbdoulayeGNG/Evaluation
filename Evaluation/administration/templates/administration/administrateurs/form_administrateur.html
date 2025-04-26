@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-header">
+    <h1>
+        {{ title }}
+        {% if administrateur %}
+        <small>{{ administrateur.nom }} {{ administrateur.prenom }}</small>
+        {% endif %}
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{% url 'administration:dashboard' %}"><i class="fa fa-dashboard"></i> Accueil</a></li>
+        <li><a href="{% url 'administration:gestion_administrateurs' %}">Administrateurs</a></li>
+        <li class="active">{{ title }}</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Informations de l'administrateur</h3>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" class="form-horizontal">
+                    {% csrf_token %}
+                    <div class="box-body">
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                {{ message }}
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+
+                        <div class="form-group {% if form.username.errors %}has-error{% endif %}">
+                            <label class="col-sm-2 control-label" for="{{ form.username.id_for_label }}">
+                                Nom d'utilisateur <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-10">
+                                {{ form.username }}
+                                {% if form.username.errors %}
+                                    <span class="help-block">{{ form.username.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group {% if form.nom.errors %}has-error{% endif %}">
+                            <label class="col-sm-2 control-label" for="{{ form.nom.id_for_label }}">
+                                Nom <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-10">
+                                {{ form.nom }}
+                                {% if form.nom.errors %}
+                                    <span class="help-block">{{ form.nom.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group {% if form.prenom.errors %}has-error{% endif %}">
+                            <label class="col-sm-2 control-label" for="{{ form.prenom.id_for_label }}">
+                                Prénom <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-10">
+                                {{ form.prenom }}
+                                {% if form.prenom.errors %}
+                                    <span class="help-block">{{ form.prenom.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group {% if form.email.errors %}has-error{% endif %}">
+                            <label class="col-sm-2 control-label" for="{{ form.email.id_for_label }}">
+                                Email <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-10">
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <span class="help-block">{{ form.email.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if form.password1 %}
+                        <div class="form-group {% if form.password1.errors %}has-error{% endif %}">
+                            <label class="col-sm-2 control-label" for="{{ form.password1.id_for_label }}">
+                                Nouveau mot de passe
+                            </label>
+                            <div class="col-sm-10">
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}
+                                    <span class="help-block">{{ form.password1.errors.0 }}</span>
+                                {% endif %}
+                                <div class="help-block">
+                                    <p>Pour changer le mot de passe, remplissez les deux champs ci-dessous. Sinon, laissez-les vides.</p>
+                                    <p>Le mot de passe doit respecter les critères suivants :</p>
+                                    <ul>
+                                        <li>Au moins 8 caractères</li>
+                                        <li>Ne peut pas être similaire aux informations personnelles</li>
+                                        <li>Ne doit pas être un mot de passe couramment utilisé</li>
+                                        <li>Ne peut pas être entièrement numérique</li>
+                                        <li>Doit contenir au moins une lettre majuscule et une minuscule</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group {% if form.password2.errors %}has-error{% endif %}">
+                            <label class="col-sm-2 control-label" for="{{ form.password2.id_for_label }}">
+                                Confirmer le mot de passe
+                            </label>
+                            <div class="col-sm-10">
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}
+                                    <span class="help-block">{{ form.password2.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="form-group {% if form.contact.errors %}has-error{% endif %}">
+                            <label class="col-sm-2 control-label" for="{{ form.contact.id_for_label }}">
+                                Contact
+                            </label>
+                            <div class="col-sm-10">
+                                {{ form.contact }}
+                                {% if form.contact.errors %}
+                                    <span class="help-block">{{ form.contact.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group {% if form.photo.errors %}has-error{% endif %}">
+                            <label class="col-sm-2 control-label" for="{{ form.photo.id_for_label }}">
+                                Photo
+                            </label>
+                            <div class="col-sm-10">
+                                {{ form.photo }}
+                                {% if form.photo.errors %}
+                                    <span class="help-block">{{ form.photo.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-footer">
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save"></i> Enregistrer
+                            </button>
+                            <a href="{% url 'administration:gestion_administrateurs' %}" class="btn btn-default">
+                                <i class="fa fa-times"></i> Annuler
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.form-group.has-error .help-block {
+    color: #dd4b39;
+}
+.help-block {
+    margin-top: 5px;
+    font-size: 13px;
+}
+.box-footer {
+    border-top: 1px solid #f4f4f4;
+    padding: 15px;
+}
+</style>
+{% endblock %}

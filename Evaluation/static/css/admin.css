@@ -1,0 +1,147 @@
+:root {
+    --primary-color: #3c8dbc;     /* Bleu du projet */
+    --secondary-color: #367fa9;    /* Version plus foncée pour les hover */
+    --accent-color: #f39c12;      /* Orange pour les accents */
+    --text-color: #fff;
+}
+
+/* Header et branding */
+#header {
+    background: var(--primary-color);
+    color: var(--text-color);
+    min-height: 60px;  /* Changed from fixed height to min-height */
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex-wrap: wrap;  /* Allow wrapping on small screens */
+}
+
+#branding {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+}
+
+#branding h1 {
+    color: var(--text-color);
+    font-size: clamp(16px, 4vw, 20px);  /* Responsive font size */
+    margin: 0;
+    padding: 0;
+    font-weight: 400;
+    white-space: nowrap;  /* Prevent text wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis;  /* Add ellipsis for long text */
+}
+
+/* User Tools et Navigation */
+#user-tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 10px 0;
+    background: transparent;
+    margin-left: auto;  /* Push to right */
+}
+
+.admin-dashboard-link {
+    background-color: var(--accent-color);
+    color: var(--text-color);
+    padding: 8px 15px;
+    border-radius: 3px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    white-space: nowrap;  /* Prevent text wrapping */
+}
+
+.admin-dashboard-link:hover {
+    background-color: #e08e0b;
+    color: var(--text-color);
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Breadcrumbs */
+div.breadcrumbs {
+    background: var(--secondary-color);
+    padding: 15px 20px;
+    color: var(--text-color);
+    font-size: 14px;
+    border: none;
+}
+
+div.breadcrumbs a {
+    color: var(--text-color);
+}
+
+/* Navigation secondaire */
+.module h2, .module caption {
+    background: var(--primary-color);
+    color: var(--text-color);
+    padding: 12px 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #header {
+        padding: 0 15px;
+    }
+
+    #branding h1 {
+        max-width: 200px;  /* Limit width on small screens */
+        font-size: 16px;  /* Taille réduite */
+    }
+
+    #user-tools {
+        padding: 8px 10px;
+        gap: 10px;
+    }
+
+    .admin-dashboard-link {
+        padding: 5px 10px;  /* Padding réduit */
+        font-size: 12px;    /* Taille de police réduite */
+    }
+
+    .admin-dashboard-link i {
+        font-size: 14px;    /* Taille d'icône réduite */
+    }
+}
+
+@media (max-width: 480px) {
+    #header {
+        flex-direction: row;  /* Maintenir l'alignement horizontal */
+        padding: 8px 10px;
+        min-height: 50px;    /* Hauteur minimale réduite */
+    }
+
+    #branding {
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    #branding h1 {
+        font-size: 14px;    /* Encore plus petit sur mobile */
+    }
+
+    #user-tools {
+        justify-content: center;
+        padding: 0;
+    }
+
+    .admin-dashboard-link {
+        width: 100%;
+        justify-content: center;
+        padding: 4px 8px;   /* Padding encore plus réduit */
+        font-size: 11px;    /* Police encore plus petite */
+    }
+
+    .admin-dashboard-link i {
+        font-size: 12px;    /* Icône encore plus petite */
+    }
+}

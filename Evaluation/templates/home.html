@@ -1,0 +1,55 @@
+{% extends 'header.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <h1>
+            Bienvenue sur la plateforme d'évaluation
+            <small>Système d'évaluation des enseignements</small>
+        </h1>
+    </section>
+
+    <section class="content">
+        <div class="box">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h3>Choisissez votre espace</h3>
+                        <div class="space-buttons">
+                            {% if user.is_authenticated %}
+                                {% if user.is_staff %}
+                                    <a href="{% url 'administration:dashboard' %}" class="btn btn-primary btn-lg">
+                                        <i class="fa fa-dashboard"></i> Espace Administration
+                                    </a>
+                                {% elif user.role == 'professeur' %}
+                                    <a href="{% url 'prof:dashboard_professeur' %}" class="btn btn-info btn-lg">
+                                        <i class="fa fa-user"></i> Espace Professeur
+                                    </a>
+                                {% elif user.role == 'etudiant' %}
+                                    <a href="{% url 'etudiants:dashboard_etudiant' %}" class="btn btn-success btn-lg">
+                                        <i class="fa fa-graduation-cap"></i> Espace Étudiant
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'utilisateurs:login' %}" class="btn btn-primary btn-lg">
+                                    <i class="fa fa-sign-in"></i> Se connecter
+                                </a>
+                                
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.space-buttons {
+    margin-top: 30px;
+}
+.space-buttons .btn {
+    margin: 10px;
+}
+</style>
+{% endblock %}

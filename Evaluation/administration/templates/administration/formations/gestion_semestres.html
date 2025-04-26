@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Gestion des Semestres</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'administration:dashboard' %}">Accueil</a></li>
+                        <li class="breadcrumb-item active">Semestres</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Bouton Ajouter -->
+            <div class="mb-3">
+                <a href="{% url 'administration:ajouter_semestre' %}" class="btn btn-primary">
+                    <i class="fa fa-plus"></i> Nouveau Semestre
+                </a>
+            </div>
+
+            <!-- Liste des semestres -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Liste des Semestres</h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Année Universitaire</th>
+                                <th>Semestre</th>
+                                <th>Période du Semestre</th>
+                                <th>Période d'Évaluation</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for semestre in semestres %}
+                            <tr>
+                                <td>{{ semestre.annee_universitaire }}</td>
+                                <td>{{ semestre.get_semestre_display }}</td>
+                                <td>
+                                    Du {{ semestre.date_debut|date:"d/m/Y" }}
+                                    au {{ semestre.date_fin|date:"d/m/Y" }}
+                                </td>
+                                <td>
+                                    Du {{ semestre.periode_evaluation_debut|date:"d/m/Y" }}
+                                    au {{ semestre.periode_evaluation_fin|date:"d/m/Y" }}
+                                </td>
+                                <td>
+                                    {% if semestre.est_actif %}
+                                        <span class="badge badge-success">En cours</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">Terminé</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{% url 'administration:detail_semestre' semestre.id %}" 
+                                           class="btn btn-info btn-sm" title="Détails">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'administration:modifier_semestre' semestre.id %}" 
+                                           class="btn btn-warning btn-sm" title="Modifier">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'administration:supprimer_semestre' semestre.id %}" 
+                                           class="btn btn-danger btn-sm" 
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce semestre ?')"
+                                           title="Supprimer">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    Aucun semestre enregistré
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .btn-group .btn {
+        margin-right: 2px;
+    }
+    .badge {
+        padding: 5px 10px;
+    }
+    .table td {
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}

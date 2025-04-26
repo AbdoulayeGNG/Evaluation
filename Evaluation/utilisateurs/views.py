@@ -13,6 +13,28 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Utilisateur, Etudiant, Professeur, Administrateur
 from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
+from django.contrib import messages
+
+class CustomLoginView(LoginView):
+    template_name = 'registration/login.html'
+    
+    def get_success_url(self):
+        user = self.request.user
+        # Redirection selon les permissions
+        if user.is_staff:
+            return reverse_lazy('administration:dashboard')
+        elif user.role == 'professeur':
+            return reverse_lazy('prof:dashboard_professeur')
+        elif user.role == 'etudiant':
+            return reverse_lazy('etudiants:dashboard_etudiant')
+        return reverse_lazy('home')
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Identifiants invalides. Veuillez réessayer.')
+        return super().form_invalid(form)
 
 def accueil(request):
     return render(request, 'index.html')
@@ -65,33 +87,33 @@ def CreationCompte(request):
                 departement=request.POST.get('departement'),
             )
         elif role == 'admin':
-            Administrateur.objects.create(
-                user=utilisateur,
-                nom=request.POST.get('nom'),
-                prenom=request.POST.get('prenom'),
-                contact=request.POST.get('contact'),
-            )
-            content_type = ContentType.objects.get_for_model(Utilisateur)
-            permissions = Permission.objects.filter(content_type=content_type)
-            
-            # Définir les permissions spécifiques
-            admin_permissions = [
-                'view_utilisateur',
-                'add_utilisateur',
-                'change_utilisateur',
-                'delete_utilisateur',
-                'view_etudiant',
-                'view_professeur',
-                'view_administrateur',
-            ]
-            
-            # Attribuer les permissions
-            for perm in permissions:
-                if perm.codename in admin_permissions:
+            with transaction.atomic():
+                utilisateur = Utilisateur.objects.create(
+                    username=username,
+                    email=email,
+                    role='admin',
+                    password=make_password(password),
+                    is_staff=True  # Définir is_staff à True pour tous les admins
+                )
+                
+                # Si c'est un super administrateur
+                if request.POST.get('is_superadmin'):
+                    utilisateur.is_superuser = True
+                    utilisateur.save()
+                
+                Administrateur.objects.create(
+                    user=utilisateur,
+                    nom=request.POST.get('nom'),
+                    prenom=request.POST.get('prenom'),
+                    contact=request.POST.get('contact'),
+                )
+                
+                # Ajouter les permissions nécessaires
+                content_type = ContentType.objects.get_for_model(Utilisateur)
+                permissions = Permission.objects.filter(content_type=content_type)
+                
+                for perm in permissions:
                     utilisateur.user_permissions.add(perm)
-            
-            utilisateur.is_staff = True  # Permet l'accès à l'interface d'administration
-            utilisateur.save()
         else:
             # Supprimer l'utilisateur si le rôle n'est pas valide
             utilisateur.delete()
@@ -111,6 +133,30 @@ def CreationCompte(request):
 
     # Si méthode GET, afficher le formulaire
     return render(request, 'user/register.html')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            
+            # Redirection selon les permissions
+            if user.is_staff:
+                # Redirection vers le dashboard admin pour tous les staffs
+                return redirect('administration:dashboard')
+            elif user.role == 'professeur':
+                return redirect('prof:dashboard_professeur')
+            elif user.role == 'etudiant':
+                return redirect('etudiants:dashboard_etudiant')
+                
+        else:
+            messages.error(request, 'Identifiants invalides')
+    
+    return render(request, 'registration/login.html')
+
 def connecter(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -140,6 +186,11 @@ def deconnecter(request):
     logout(request)
     return redirect('utilisateurs:accueil')
 
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        messages.success(request, 'Vous avez été déconnecté avec succès')
+        return render(request, 'registration/logged_out.html')
 
 
 # Inscription d'un utilisateur (étudiant, professeur ou admin)

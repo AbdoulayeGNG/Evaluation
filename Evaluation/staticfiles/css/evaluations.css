@@ -1,0 +1,91 @@
+/* Styles pour la liste des évaluations */
+.comment-preview {
+    max-width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comment-preview a {
+    white-space: nowrap;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.comment-preview a:hover {
+    color: #0056b3;
+}
+
+/* Styles pour le modal */
+.modal-body {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.modal-header.bg-primary {
+    background-color: #007bff !important;
+}
+
+.modal-title {
+    font-size: 1.2rem;
+}
+
+.evaluation-info {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.evaluation-comment {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.evaluation-comment p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Badges et boutons */
+.badge {
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.btn-group .btn {
+    margin-right: 4px;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .comment-preview {
+        max-width: 150px;
+    }
+    
+    .modal-dialog {
+        margin: 10px;
+    }
+}

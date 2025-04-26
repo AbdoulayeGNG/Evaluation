@@ -1,138 +1,215 @@
 {% extends "base1.html" %}
 {% load static %}
 
-        <!-- Sidebar -->
-        
-        {% block content %}
-    <div class="container-fluid">
-        <div class="row">
-        <!-- Contenu Principal -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <!-- Section Bienvenue -->
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Bienvenue, {{ request.user.etudiant.nom }} {{ request.user.etudiant.prenom }}</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <a href="{% url 'evaluationProf:ajouter_evaluation' %}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Nouvelle Évaluation
+{% block content %}
+<div class="container-fluid">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Dashboard Étudiant</h1>
+                    <small>Bienvenue, {{ request.user.etudiant.nom }} {{ request.user.etudiant.prenom }}</small>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Action Buttons -->
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <a href="{% url 'evaluationProf:ajouter_evaluation' %}" class="btn btn-primary float-right">
+                        <i class="fa fa-plus"></i> Nouvelle Évaluation
                     </a>
                 </div>
             </div>
 
-            <!-- Cartes de statistiques -->
-            <div class="row mb-4">
+            <!-- Info Boxes -->
+            <div class="row">
                 <div class="col-md-4">
-                    <div class="card bg-primary text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">Évaluations Totales</h5>
-                            <h2 class="card-text">{{ total_evaluations }}</h2>
+                    <div class="info-box">
+                        <span class="info-box-icon bg-primary"><i class="fa fa-check-square"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Évaluations Totales</span>
+                            <span class="info-box-number">{{ total_evaluations }}</span>
                         </div>
                     </div>
                 </div>
+                
                 <div class="col-md-4">
-                    <div class="card bg-success text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">Évaluations en Attente</h5>
-                            <h2 class="card-text">{{ evaluations_en_attente }}</h2>
+                    <div class="info-box">
+                        <span class="info-box-icon bg-warning"><i class="fa fa-clock-o"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">En Attente</span>
+                            <span class="info-box-number">{{ evaluations_en_attente }}</span>
                         </div>
                     </div>
                 </div>
+                
                 <div class="col-md-4">
-                    <div class="card bg-info text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">Professeurs Évalués</h5>
-                            <h2 class="card-text">{{ profs_evalues }}</h2>
+                    <div class="info-box">
+                        <span class="info-box-icon bg-success"><i class="fa fa-users"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Professeurs Évalués</span>
+                            <span class="info-box-number">{{ profs_evalues }}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Liste des dernières évaluations -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Vos Dernières Évaluations</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Professeur</th>
-                                    <th>Formation</th>
-                                    <th>Date</th>
-                                    <th>Statut</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for evaluation in evaluations_recentes %}
-                                <tr>
-                                    <td>{{ evaluation.formation.professeur.nom }} {{ evaluation.formation.professeur.prenom }}</td>
-                                    <td>{{ evaluation.formation.nom }}</td>
-                                    <td>{{ evaluation.date_creation|date:"d/m/Y H:i" }}</td>
-                                    <td>
-                                        <span class="badge {% if evaluation.statut == 'validé' %}bg-success{% elif evaluation.statut == 'en attente' %}bg-warning{% else %}bg-secondary{% endif %}">
-                                            {{ evaluation.statut }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        {% if evaluation.peut_modifier or evaluation.statut == 'rejeté' %} 
-                                        <a href="{% url 'evaluationProf:modifier_evaluation' evaluation.id %}" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="{% url 'evaluationProf:supprimer_evaluation' evaluation.id %}" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="5" class="text-center">Aucune évaluation récente</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+            <!-- Dernières Évaluations -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fa fa-list"></i> Vos Dernières Évaluations
+                            </h3>
+                        </div>
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Professeur</th>
+                                        <th>Formation</th>
+                                        <th>Date</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for evaluation in evaluations_recentes %}
+                                    <tr>
+                                        <td>{{ evaluation.formation.professeur.get_full_name }}</td>
+                                        <td>{{ evaluation.formation.nom }}</td>
+                                        <td><span class="text-muted">{{ evaluation.date_creation|date:"d/m/Y H:i" }}</span></td>
+                                        <td>
+                                            {% if evaluation.statut == 'validé' %}
+                                                <span class="badge badge-success">Validé</span>
+                                            {% elif evaluation.statut == 'en attente' %}
+                                                <span class="badge badge-warning">En attente</span>
+                                            {% else %}
+                                                <span class="badge badge-danger">Rejeté</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if evaluation.peut_modifier or evaluation.statut == 'rejeté' %}
+                                            <div class="btn-group">
+                                                <a href="{% url 'evaluationProf:modifier_evaluation' evaluation.id %}" 
+                                                   class="btn btn-sm btn-info" title="Modifier">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'evaluationProf:supprimer_evaluation' evaluation.id %}" 
+                                                   class="btn btn-sm btn-danger" title="Supprimer"
+                                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette évaluation ?')">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            </div>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            <i class="fa fa-info-circle"></i> Aucune évaluation récente
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </main>
-
-    </div>
-</div>   
+        </div>
+    </section>
+</div>
 {% endblock %}
-  
-
 
 {% block extra_css %}
+<link href="{% static 'css/etudiant-dashboard.css' %}" rel="stylesheet">
 <style>
-    .sidebar {
-        min-height: calc(100vh - 56px);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    
-    .nav-link {
-        color: #333;
-        padding: 0.8rem 1rem;
-    }
-    
-    .nav-link:hover {
-        background-color: #f8f9fa;
-    }
-    
-    .nav-link.active {
-        color: #007bff;
-        background-color: #e9ecef;
-    }
-    
-    .card {
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+.info-box {
+    min-height: 100px;
+    background: #fff;
+    width: 100%;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    border-radius: 3px;
+    margin-bottom: 20px;
+}
+
+.info-box-icon {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    display: block;
+    float: left;
+    height: 100px;
+    width: 90px;
+    text-align: center;
+    font-size: 45px;
+    line-height: 100px;
+    background: rgba(0,0,0,0.2);
+}
+
+.info-box-content {
+    padding: 5px 10px;
+    margin-left: 90px;
+}
+
+.info-box-text {
+    display: block;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+}
+
+.info-box-number {
+    display: block;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.badge {
+    font-size: 12px;
+    padding: 5px 10px;
+}
+
+.table td, .table th {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+.btn-group .btn {
+    margin-right: 5px;
+}
+
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.breadcrumb {
+    background: transparent;
+    margin-top: 10px;
+}
 </style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Activation des tooltips Bootstrap
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })

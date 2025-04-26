@@ -1,47 +1,86 @@
 from datetime import timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.utils import timezone
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
-from .models import Evaluation, Formation, Critere, NoteCritere
+from django.db import transaction
+from .models import Evaluation, Formation, Critere, NoteCritere, Semestre
 
 # Ajouter une évaluation
 @login_required
 def ajouter_evaluation(request):
+    etudiant = request.user.etudiant
+    
+    # Récupérer le semestre actif
+    semestre_actif = Semestre.objects.filter(
+        periode_evaluation_debut__lte=timezone.now().date(),
+        periode_evaluation_fin__gte=timezone.now().date()
+    ).first()
+    
+    if not semestre_actif:
+        messages.warning(request, "Aucune période d'évaluation n'est actuellement ouverte.")
+        return redirect('etudiants:dashboard_etudiant')
+    
+    # Filtrer les formations évaluables
+    formations = Formation.objects.filter(
+    semestre=semestre_actif,
+    niveau=etudiant.licence,
+    departement=etudiant.departement
+).exclude(
+    evaluation__etudiant=request.user  # Exclure les formations déjà évaluées
+).order_by('nom')
     if request.method == "POST":
-        formation_id = request.POST["formation"]
-        commentaire = request.POST.get("commentaire", "").strip()  # Récupérer et supprimer les espaces inutiles
-
+        formation_id = request.POST.get("formation")
+        formation = get_object_or_404(Formation, id=formation_id)
+        
+        # Vérifier si la formation est déjà évaluée par cet étudiant
+        if Evaluation.objects.filter(etudiant=request.user, formation=formation).exists():
+            messages.error(request, "Vous avez déjà évalué cette formation.")
+            return redirect("evaluationProf:ajouter_evaluation")
+        
+        # Vérifier si la formation est évaluable
+        if not formation.est_evaluable():
+            messages.error(request, "La période d'évaluation pour ce module n'est pas active.")
+            return redirect("evaluationProf:ajouter_evaluation")
+        
+        commentaire = request.POST.get("commentaire", "").strip()
+        
         if not commentaire:
             messages.error(request, "Le commentaire est obligatoire.")
-            return redirect("ajouter_evaluation")
-
-        formation = get_object_or_404(Formation, id=formation_id)
-
-        evaluation = Evaluation.objects.create(
-            etudiant=request.user,
-            formation=formation,
-            commentaire=commentaire,
-            statut='en attente'
-        )
-
-        # Sauvegarde des notes par critère
-        for critere in Critere.objects.all():
-            note = request.POST.get(f"critere_{critere.id}")
-            if note:
-                NoteCritere.objects.create(
-                    evaluation=evaluation,
-                    critere=critere,
-                    note=int(note)
+            return redirect("evaluationProf:ajouter_evaluation")
+        
+        try:
+            with transaction.atomic():
+                evaluation = Evaluation.objects.create(
+                    etudiant=request.user,
+                    formation=formation,
+                    commentaire=commentaire,
+                    statut='en attente'
                 )
-
-        messages.success(request, "Évaluation ajoutée avec succès ! En attente de validation.")
-        return redirect('etudiants:dashboard_etudiant')
-    etudiant = request.user.etudiant
-    formations = Formation.objects.filter(niveau=etudiant.licence, departement=etudiant.departement)
-    # formations = Formation.objects.all()
-    criteres = Critere.objects.all()
-    return render(request, "evaluationProf/evaluation.html", {"formations": formations, "criteres": criteres})
+                
+                # Sauvegarde des notes
+                for critere in Critere.objects.all():
+                    note = request.POST.get(f"critere_{critere.id}")
+                    if note:
+                        NoteCritere.objects.create(
+                            evaluation=evaluation,
+                            critere=critere,
+                            note=int(note)
+                        )
+                
+                messages.success(request, "Évaluation ajoutée avec succès ! En attente de validation.")
+                return redirect('etudiants:dashboard_etudiant')
+                
+        except Exception as e:
+            messages.error(request, f"Erreur lors de l'ajout de l'évaluation : {str(e)}")
+    
+    context = {
+        "formations": formations,
+        "criteres": Critere.objects.all(),
+        "semestre_actif": semestre_actif
+    }
+    return render(request, "evaluationProf/evaluation.html", context)
 
 # Afficher les évaluations validées
 @login_required
@@ -63,9 +102,7 @@ def modifier_evaluation(request, evaluation_id):
     evaluation = get_object_or_404(Evaluation, id=evaluation_id, etudiant=request.user)
 
     # Vérifier si l'évaluation peut encore être modifiée (moins de 30 minutes)
-    if now() - evaluation.date_creation > timedelta(minutes=1440):
-        messages.error(request, "Le délai de modification est expiré.")
-        return redirect("etudiants:dashboard_etudiant")
+   
 
     if request.method == "POST":
         commentaire = request.POST.get("commentaire", "").strip()
@@ -75,6 +112,8 @@ def modifier_evaluation(request, evaluation_id):
             return redirect("evaluationProf:modifier_evaluation", evaluation_id=evaluation.id)
 
         evaluation.commentaire = commentaire
+        evaluation.statut = "en attente"  # Remettre l'évaluation en attente après modification
+        evaluation.date_modification = now()
         evaluation.save()
 
         # Mettre à jour les notes par critère
@@ -104,11 +143,6 @@ def modifier_evaluation(request, evaluation_id):
 def supprimer_evaluation(request, evaluation_id):
     """Permet de supprimer une évaluation dans un délai donné"""
     evaluation = get_object_or_404(Evaluation, id=evaluation_id, etudiant=request.user)
-
-    # Vérifier si le délai de suppression est encore valable
-    if now() - evaluation.date_creation > timedelta(minutes=1440):
-        messages.error(request, "Le délai de suppression est expiré.")
-        return redirect("evaluationProf:liste_evaluations")
 
     if request.method == "POST":
         evaluation.delete()
